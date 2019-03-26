@@ -1,6 +1,6 @@
 package com.tensor.api.org.service.hbase;
 
-import org.mortbay.util.ajax.JSON;
+
 import com.google.gson.JsonObject;
 import  com.tensor.api.org.enpity.New;
 import  com.tensor.api.org.enpity.ResultData;

@@ -5,45 +5,47 @@ import org.apache.hadoop.hbase.client.Result;
 
 public interface HBaseBasicService {
 	 
+       //1.æ ¹æ®ä¼ å…¥çš„è¡¨å è¡Œé”® åˆ—æ—å åˆ—å è¿”å›æ•°æ® 
+	Result getdata(String tableName,String rowkey,String cf,String column) throws Exception; 
+	//2.æ ¹æ®ä¼ å…¥çš„ è¡¨å è¡Œé”® åˆ—æ—å åˆ—å å°†æ•°æ®æ’å…¥æ•°æ®åº“ è¿”å›æ˜¯å¦æˆåŠŸ
+	boolean putdata(String tableName,String rowkey,String cf,String column,String value)throws Exception;
+	//3.æ ¹æ®ä¼ å…¥çš„ è¡¨å è¡Œé”® åˆ—æ—å åˆ—å åˆ é™¤æ•°æ® è¿”å›æ˜¯å¦æˆåŠŸ
+	boolean delData(String tableName,String rowkey,String cf,String column)throws Exception;
+	//4.æ ¹æ®ä¼ å…¥çš„ è¡¨å è¡Œé”® åˆ é™¤æŸä¸€è¡Œæ•°æ® è¿”å›æ˜¯å¦æˆåŠŸ
+	boolean delRow(String tableName,String rowkey)throws Exception;
+	//5.æ ¹æ®ä¼ å…¥çš„è¡¨å è¡Œé”®  åˆ—æ— åˆ é™¤æŸä¸€åˆ—æ—
+	boolean delfamily(String tableName,String rowkey,String cf)throws Exception;
+        //6.æ ¹æ®ä¼ å…¥çš„è¡¨å æ‰«ææ•´å¼ è¡¨
+	ResultScanner scantable(String tableName)throws Exception;
+	//7.æ ¹æ®ä¼ å…¥çš„è¡¨å èµ·å§‹è¡Œé”® ç»ˆæ­¢è¡Œé”® è¿›è¡Œæ‰«æ
+	ResultScanner scantable(String tableName ,String startrowkey ,String stoprowkey)throws Exception;
+	//8.æ ¹æ®ä¼ å…¥çš„è¡¨å èµ·å§‹è¡Œé”® è¿›è¡Œæ‰«æ
+	ResultScanner scantable(String tableName ,String startrowkey)throws Exception;
+	 //9.ç»Ÿè®¡è¡Œæ•°
+	 long count(String tableName)throws Exception;
+	 //10.æ ¹æ®ä¼ å…¥çš„è¡¨å åˆ—æ—å æŸ¥æ‰¾ç¬¦åˆæ¡ä»¶çš„åˆ—
+	 ResultScanner FamilyFilter(String tableName,String cf)throws Exception;
+	 //11.æ ¹æ® ä¼ å…¥çš„è¡¨å  åˆ—å æŸ¥æ‰¾ç¬¦åˆæ¡ä»¶æ¡ä»¶çš„åˆ— 
+	 ResultScanner  QualifierFilter(String tableName ,String colmun)throws Exception;
+	 //12.æ ¹æ®ä¼ å…¥çš„ è¡¨å è¡Œé”®å è¿”å›ç¬¦åˆçš„è¡Œé”® è¿”å› è¯¥è¡Œæ•°æ®
+	 ResultScanner RowFilter(String tableName,String row )throws Exception;
+	 //13.å–å›rowkeyä»¥æŒ‡å®šprefixå¼€å¤´çš„æ‰€æœ‰è¡Œ è¿”å› è¿™äº›è¡Œçš„å…¨éƒ¨æ•°æ®
+	 ResultScanner PrefixFilter(String tableName, String reg)throws Exception;
+	 //14.æ ¹æ®æ•´è¡Œä¸­çš„æ¯ä¸ªåˆ—æ¥åšè¿‡æ»¤ï¼Œåªè¦å­˜åœ¨ä¸€åˆ—ä¸æ»¡è¶³æ¡ä»¶ï¼Œæ•´è¡Œéƒ½è¢«è¿‡æ»¤æ‰ã€‚è¿”å›ç¬¦åˆè¡Œçš„å…¨éƒ¨æ•°æ®
+	 ResultScanner SkipFilter(String tableName,String column)throws Exception;
+	 //15.æŒ‰æ—¶é—´æˆ³æ£€ç´¢ è¿”å›ç¬¦åˆè¡Œçš„å…¨éƒ¨æ•°æ®
+	 ResultScanner TimestampsFilter(String tableName,List<Long>Timestamps )throws Exception;
+	 ResultScanner TimestampsFilter(String tableName,Long Timestamps )throws Exception;
+	  //16.ä¸€æ—¦é‡åˆ°ä¸€æ¡ç¬¦åˆè¿‡æ»¤æ¡ä»¶çš„æ•°æ®ï¼Œå°±åœæ­¢æ‰«æ  è¿”å›ç¬¦åˆè¡Œçš„å…¨éƒ¨æ•°æ®
+	      //æ ¹æ®è¡Œ
+	 ResultScanner WhileMatchbyrowkeyFilter(String tableName,String rowkey)throws Exception;
+	      //æ ¹æ®åˆ—
+	 ResultScanner  WhileMatchbycolumnFilter(String tableName,String column)throws Exception;
+	      //æ ¹æ®å€¼
+	 ResultScanner  WhileMatchbyvalueFilter(String tableName ,String value)throws Exception;
+	 //17.æ ¹æ®valueå€¼å¯»æ‰¾ å…¨éƒ¨åˆ—çš„valueéƒ½ä¼šè¢«æ£€ç´¢
+	 ResultScanner  ValueFilter(String tableName,String value) throws Exception;
 	
-	//1.¸ù¾İ´«ÈëµÄ±íÃû ĞĞ¼ü ÁĞ×åÃû ÁĞÃû ·µ»ØÊı¾İ 
-	Result getdata(String tableName,String rowkey,String cf,String cloumn); 
-	//2.¸ù¾İ´«ÈëµÄ ±íÃû ĞĞ¼ü ÁĞ×åÃû ÁĞÃû ½«Êı¾İ²åÈëÊı¾İ¿â ·µ»ØÊÇ·ñ³É¹¦
-	boolean putdata(String tableName,String rowkey,String cf,String cloumn,String value);
-	//3.¸ù¾İ´«ÈëµÄ ±íÃû ĞĞ¼ü ÁĞ×åÃû ÁĞÃû É¾³ıÊı¾İ ·µ»ØÊÇ·ñ³É¹¦
-	boolean delData(String tableName,String rowkey,String cf,String cloumn);
-	//4.¸ù¾İ´«ÈëµÄ ±íÃû ĞĞ¼ü É¾³ıÄ³Ò»ĞĞÊı¾İ ·µ»ØÊÇ·ñ³É¹¦
-	boolean delRow(String tableName,String rowkey);
-	//5.¸ù¾İ´«ÈëµÄ±íÃû ĞĞ¼ü  ÁĞ×å É¾³ıÄ³Ò»ÁĞ×å
-	boolean delfamily(String tableName,String rowkey,String cf);
-                //6.¸ù¾İ´«ÈëµÄ±íÃû É¨ÃèÕûÕÅ±í
-	 Result scantable(String tableName);
-	//7.¸ù¾İ´«ÈëµÄ±íÃû ÆğÊ¼ĞĞ¼ü ÖÕÖ¹ĞĞ¼ü ½øĞĞÉ¨Ãè
-	 Result scantable(String tableName ,String startrowkey ,String stoprowkey);
-	//8.¸ù¾İ´«ÈëµÄ±íÃû ÆğÊ¼ĞĞ¼ü ½øĞĞÉ¨Ãè
-	 Result scantable(String tableName ,String startrowkey);
-	 //9.Í³¼ÆĞĞÊı
-	 long count();
-	 //10.¸ù¾İ´«ÈëµÄ±íÃû ÁĞ×åÃû ²éÕÒ·ûºÏÌõ¼şµÄÁĞ ·µ»Ø ĞĞ¼ü-ÁĞÃû-ÁĞ×å-Êı¾İ
-	 Result FamilyFilter(String tableName,String cf);
-	 //11.¸ù¾İ ´«ÈëµÄ±íÃû  ÁĞÃû ²éÕÒ·ûºÏÌõ¼şÌõ¼şµÄÁĞ ·µ»ØĞĞ¼ü-ÁĞÃû-ÁĞ×å-Êı¾İ
-	 Result  QualifierFilter(String tableName ,String clomun);
-	 //12.¸ù¾İ´«ÈëµÄ ±íÃû ĞĞ¼üÃû ·µ»Ø·ûºÏµÄĞĞ¼ü ·µ»Ø ¸ÃĞĞÊı¾İ
-	 Result RowFilter(String tableName,String row );
-	 //13.È¡»ØrowkeyÒÔÖ¸¶¨prefix¿ªÍ·µÄËùÓĞĞĞ ·µ»Ø ÕâĞ©ĞĞµÄÈ«²¿Êı¾İ
-	 Result PrefixFilter(String tableName, String reg);
-	 //14.¸ù¾İÕûĞĞÖĞµÄÃ¿¸öÁĞÀ´×ö¹ıÂË£¬Ö»Òª´æÔÚÒ»ÁĞ²»Âú×ãÌõ¼ş£¬ÕûĞĞ¶¼±»¹ıÂËµô¡£·µ»Ø·ûºÏĞĞµÄÈ«²¿Êı¾İ
-	 Result SkipFilter(String tableName,String cloumn);
-	 //15.°´Ê±¼ä´Á¼ìË÷ ·µ»Ø·ûºÏĞĞµÄÈ«²¿Êı¾İ
-	  Result TimestampsFilter(String tableName,List<Long>Timestamps );
-	  Result TimestampsFilter(String tableName,Long Timestamps );
-	  //16.Ò»µ©Óöµ½Ò»Ìõ·ûºÏ¹ıÂËÌõ¼şµÄÊı¾İ£¬¾ÍÍ£Ö¹É¨Ãè  ·µ»Ø·ûºÏĞĞµÄÈ«²¿Êı¾İ
-	      //¸ù¾İĞĞ
-	       Result WhileMatchbyrowkeyFilter(String tableName,String rowkey);
-	      //¸ù¾İÁĞ
-	       Result  WhileMatchbycolumnFilter(String tableName,String column);
-	      //¸ù¾İÖµ
-	      Result  WhileMatchbyvalueFilter(String tableName ,String value);
 	  
 	
 }

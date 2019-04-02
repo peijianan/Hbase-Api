@@ -2,8 +2,8 @@ package com.tensor.api.org.handler.impl;
 
 import com.tensor.api.org.enpity.New;
 import com.tensor.api.org.enpity.ResultData;
-import com.tensor.api.org.handler.StoreHandler;
-import com.tensor.api.org.service.hbase.HBaseNews;
+import com.tensor.api.org.handler.NewsHandler;
+import com.tensor.api.org.service.hbase.HBaseNewsService;
 import com.tensor.api.org.util.alog.SimHashAlogUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,10 +20,10 @@ import static org.springframework.web.reactive.function.server.ServerResponse.ok
  * @Date: 2019-03-26 22:05
  */
 @Component
-public class StoreHandlerImpl implements StoreHandler {
+public class NewsHandlerImpl implements NewsHandler {
 
     @Autowired
-    private HBaseNews hBaseNews;
+    private HBaseNewsService hBaseNewsService;
 
     @Override
     public Mono<ServerResponse> saveNew(ServerRequest request) {
@@ -31,9 +31,14 @@ public class StoreHandlerImpl implements StoreHandler {
             newBean.setHashCode(SimHashAlogUtil.simHash(newBean.getText()));
             return newBean;
         }).flatMap(newBean -> {
-            Mono<ResultData> mono = Mono.just(hBaseNews.Putnews(newBean));
+            Mono<ResultData> mono = Mono.just(hBaseNewsService.putNews(newBean));
             return ok().body(BodyInserters.fromPublisher(mono.publishOn(Schedulers.elastic()), ResultData.class))
                     .subscribeOn(Schedulers.elastic());
         });
+    }
+
+    @Override
+    public Mono<ServerResponse> query(ServerRequest request) {
+        return null;
     }
 }

@@ -8,8 +8,20 @@ import reactor.core.publisher.Mono;
  * @Author: chuntaojun
  * @Date: 2019-03-26 22:05
  */
-public interface StoreHandler {
+public interface NewsHandler {
 
+    /**
+     *
+     * @param request
+     * @return
+     */
     Mono<ServerResponse> saveNew(ServerRequest request);
+
+    /**
+     *
+     * @param request
+     * @return
+     */
+    Mono<ServerResponse> query(ServerRequest request);
 
 }

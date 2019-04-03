@@ -2,7 +2,7 @@ package com.tensor.api.org.service.hbase;
 
 
 import com.google.gson.JsonObject;
-import com.tensor.api.org.enpity.New;
+import com.tensor.api.org.enpity.News;
 import com.tensor.api.org.enpity.ResultData;
 
 public interface HBaseNewsService {
@@ -13,7 +13,7 @@ public interface HBaseNewsService {
      * @param news
      * @return
      */
-    ResultData<Boolean> putNews(New news);
+    ResultData<Boolean> putNews(News news);
 
     /**
      * 读取全部新闻

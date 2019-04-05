@@ -4,6 +4,7 @@ package com.tensor.api.org.service.hbase;
 import com.google.gson.JsonObject;
 import com.tensor.api.org.enpity.News;
 import com.tensor.api.org.enpity.ResultData;
+import reactor.core.publisher.Mono;
 
 public interface HBaseNewsService {
 
@@ -13,69 +14,58 @@ public interface HBaseNewsService {
      * @param news
      * @return
      */
-    ResultData<Boolean> putNews(News news);
+    Mono<ResultData<Boolean>> putNews(News news);
 
     /**
      * 读取全部新闻
      *
      * @return
      */
-    ResultData<JsonObject> getAllNews();
-
-    /**
-     * 读取全部文章 返回行键-文章
-     *
-     * @return
-     */
-    ResultData<JsonObject> getAllText();
+    Mono<ResultData<JsonObject>> getAllNews();
 
     /**
      * 读取全部作者 返回 行键-作者
      *
      * @return
      */
-    ResultData<JsonObject> getAllAuthor();
+    Mono<ResultData<JsonObject>> getAllAuthor();
 
     /**
      * 读取全部标题 返回 行键-标题
      *
      * @return
      */
-    ResultData<JsonObject> getAllTitle();
+    Mono<ResultData<JsonObject>> getAllTitle();
 
     /**
      * 根据行键读取新闻 返回对应新闻
      *
-     * @param tableName
      * @param rowKey
      * @return
      */
-    ResultData<JsonObject> getNewstByRowKey(String tableName, String rowKey);
+    Mono<ResultData<JsonObject>> getNewsByRowKey(String rowKey);
 
     /**
      * 根据标题读取新闻  返回对应新闻
      *
-     * @param tableName
      * @param newTitle
      * @return
      */
-    ResultData<JsonObject> Getnewsbytitle(String tableName, String newTitle);
+    Mono<ResultData<JsonObject>> getNewsByTitle(String newTitle);
 
     /**
      * 根据作者读新闻    返回对应新闻
      *
-     * @param tableName
      * @param author
      * @return
      */
-    ResultData<JsonObject> Getnewsnyauthor(String tableName, String author);
+    Mono<ResultData<JsonObject>> getNewsByAuthor(String author);
 
     /**
      * 根据分类读新闻
      *
-     * @param tableName
      * @param newType
      * @return
      */
-    ResultData<JsonObject> Getnewsbytype(String tableName, String newType);
+    Mono<ResultData<JsonObject>> getNewsByType(String newType);
 }

@@ -1,10 +1,10 @@
 package com.tensor.api.org.util.alog;
 
+import com.tensor.api.org.enpity.News;
 import lombok.extern.slf4j.Slf4j;
 import org.ansj.app.keyword.KeyWordComputer;
 import org.ansj.app.keyword.Keyword;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -20,7 +20,8 @@ public final class SimHashAlogUtil {
 
     private final static int TOP_K_KEY_WORD = 50;
 
-    public static String simHash(String str) {
+    public static News simHash(News newsBean) {
+        String str = newsBean.getText();
         KeyWordComputer kwc = new KeyWordComputer(TOP_K_KEY_WORD);
         Collection<Keyword> keyList = kwc.computeArticleTfidf(str);
         System.out.println(keyList);
@@ -43,7 +44,7 @@ public final class SimHashAlogUtil {
         }).count();
         ArrayList<Integer> answer = sum(keyScores);
         if (answer.isEmpty()) {
-            return "00";
+            newsBean.setHashCode("00");
         }
         StringBuilder simHash = new StringBuilder();
         answer.stream().peek(integer -> {
@@ -53,7 +54,8 @@ public final class SimHashAlogUtil {
                 simHash.append('0');
             }
         }).count();
-        return simHash.toString();
+        newsBean.setHashCode(simHash.toString());
+        return newsBean;
     }
 
     private static String hash(String str) {
@@ -93,10 +95,6 @@ public final class SimHashAlogUtil {
         }
         zero.append(s);
         return zero.toString();
-    }
-
-    public static void main(String[] args) {
-        System.out.println(simHash("辽宁省凌源第三监狱两名逃犯落网后，辽宁省有关部门立即启动对相关责任人的问责程序。辽宁省监狱管理局７日通报称，已将凌源第三监狱监狱长予以免职，并责令配合调查。"));
     }
 
 }

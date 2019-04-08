@@ -24,4 +24,46 @@ public interface NewsHandler {
      */
     Mono<ServerResponse> query(ServerRequest request);
 
+    /**
+     *
+     * @param request
+     * @return
+     */
+    Mono<ServerResponse> queryAll(ServerRequest request);
+
+    /**
+     *
+     * @param request
+     * @return
+     */
+    Mono<ServerResponse> queryAllAuthor(ServerRequest request);
+
+    /**
+     *
+     * @param request
+     * @return
+     */
+    Mono<ServerResponse> queryAllTitle(ServerRequest request);
+
+    /**
+     *
+     * @param request
+     * @return
+     */
+    Mono<ServerResponse> queryByTitle(ServerRequest request);
+
+    /**
+     *
+     * @param request
+     * @return
+     */
+    Mono<ServerResponse> queryByAuthor(ServerRequest request);
+
+    /**
+     *
+     * @param request
+     * @return
+     */
+    Mono<ServerResponse> queryByType(ServerRequest request);
+
 }

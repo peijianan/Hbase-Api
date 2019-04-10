@@ -1,5 +1,6 @@
 package com.tensor.api.org.service.spark.distinct;
 
+import com.tensor.api.org.enpity.News;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 
@@ -10,12 +11,11 @@ import org.apache.spark.api.java.JavaRDD;
  * @date 2019/4/3
  */
 public interface DistinctService {
-    /**todo 类型待定
+    /**
+     * 将给定的新闻数据集中，每一条数据 与已有的数据集合比较，有重复则删除
      *
-     * @param data 词频与文章数据
-     * @param <K> 键，暂定文章id
-     * @param <V> 值，文章词列表
-     * @return 去重后的文章
+     * @param data 待处理的文章列表
+     * @return 去重后的文章列表
      */
-    <K , V> JavaRDD<V> distinct(JavaPairRDD<K , V> data);
+    JavaRDD<News> distinct(JavaRDD<News> data);
 }

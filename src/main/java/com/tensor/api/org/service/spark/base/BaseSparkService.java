@@ -9,11 +9,5 @@ import org.apache.spark.SparkConf;
  * @date 2019/4/3
  */
 public interface BaseSparkService {
-    /**
-     * 初始化sparkConf和sparkContext
-     */
-    void init();
-
-
-
+    //todo :留待添加接口方法
 }

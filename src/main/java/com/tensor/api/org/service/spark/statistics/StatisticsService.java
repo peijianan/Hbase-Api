@@ -1,5 +1,7 @@
 package com.tensor.api.org.service.spark.statistics;
 
+import com.tensor.api.org.enpity.News;
+import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 
 /**
@@ -9,13 +11,11 @@ import org.apache.spark.api.java.JavaRDD;
  * @date 2019/4/3
  */
 public interface StatisticsService {
-    /**todo 是否引入request类型
-     *
+    /**
      * 获取词频
      *
      * @param article 文章
-     * @param <T> 未确定好的参数类型
-     * @return 词频统计结果
+     * @return 词频统计结果rdd
      */
-    <T> JavaRDD<T> getWordFrequency(T article);
+    JavaPairRDD<String , Integer> getWordFrequency(News article);
 }

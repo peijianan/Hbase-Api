@@ -20,6 +20,7 @@ import java.util.*;
  * @date 2019/4/3
  */
 public class StatisticServiceImpl extends BaseSparkServiceImpl implements StatisticsService {
+    private static final String DEFAULT_SENTENCE_SPLIT_PATTERN = "([.\n]+\\s?)";
     /**
      * 词频统计
      * TODO 未使用分词工具，目前仅统计单词
@@ -30,7 +31,7 @@ public class StatisticServiceImpl extends BaseSparkServiceImpl implements Statis
     @Override
     public JavaPairRDD<String, Integer> getWordFrequency(News article) {
 //        String content = article.getText();
-        JavaRDD<String> content = sc.parallelize(Arrays.asList(article.getText()));
+        JavaRDD<String> content = sc.parallelize(Collections.singletonList(article.getText()));
         JavaPairRDD<String , Integer> result = content
                 .flatMap((FlatMapFunction<String, String>) s -> {
             //以换行、空格、逗号句号分开
@@ -44,6 +45,35 @@ public class StatisticServiceImpl extends BaseSparkServiceImpl implements Statis
 //        for (Tuple2<String , Integer> r:output) {
 //            System.out.println(r._1 + " -- " + r._2);
 //        }
+        return result;
+    }
+
+    /**
+     * 类似词频统计的方式统计句子
+     * @param article 文章
+     * @return 文章中句子--权值列表
+     */
+    @Override
+    public JavaPairRDD<String, Integer> getSentenceFrequency(News article) {
+        return getSentenceFrequency(article ,DEFAULT_SENTENCE_SPLIT_PATTERN);
+    }
+
+    @Override
+    public JavaPairRDD<String, Integer> getSentenceFrequency(News article, String splitPattern) {
+        JavaRDD<String> content = sc.parallelize(Collections.singletonList(article.getText()));
+        JavaPairRDD<String , Integer> result = content
+                .flatMap((FlatMapFunction<String, String>) s -> {
+                    //以换行、句号分开
+                    String[] words = s.split(splitPattern);
+                    return Arrays.asList(words).iterator();
+                })
+                .mapToPair((PairFunction<String, String, Integer>) s -> new Tuple2<>(s , 1))
+                .reduceByKey((Function2<Integer, Integer, Integer>) (v1, v2) -> v1 + v2);
+        List<Tuple2<String, Integer>> output = result.collect();
+//        debug
+        for (Tuple2<String , Integer> r:output) {
+            System.out.println(r._1 + " -- " + r._2);
+        }
         return result;
     }
 }

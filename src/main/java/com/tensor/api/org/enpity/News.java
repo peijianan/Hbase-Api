@@ -17,4 +17,28 @@ public class News {
     private String text;
     private String hashCode;
 
+
+    public long getId() {
+        return id;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public String getNewTitle() {
+        return newTitle;
+    }
+
+    public String getNewType() {
+        return newType;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 }

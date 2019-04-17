@@ -4,11 +4,13 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.tensor.api.org.enpity.News;
 import com.tensor.api.org.enpity.ResultData;
+import com.tensor.api.org.service.hbase.HBaseBasicService;
 import com.tensor.api.org.service.hbase.HBaseNewsService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -21,13 +23,13 @@ import reactor.core.publisher.Mono;
 
 public class HBaseNewsServiceImpl implements HBaseNewsService {
 
+    @Autowired private HBaseBasicService hBaseBasicService;
     @Override
     public Mono<ResultData<Boolean>> putNews(News news) throws Exception {
         ResultData resultData=new ResultData();
         Mono<ResultData<Boolean>> dataMono = Mono.empty();
         HBaseUtils hbBaseUtils = new HBaseUtils();
         String id = hbBaseUtils.getGoodId();
-        HBaseBasicServiceImpl hBaseBasicService = new HBaseBasicServiceImpl();
         boolean flag = true;
         try {
 
@@ -60,7 +62,6 @@ public class HBaseNewsServiceImpl implements HBaseNewsService {
         JsonObject object=new JsonObject();
         try {
             HBaseUtils hbBaseUtils = new HBaseUtils();
-            HBaseBasicServiceImpl hBaseBasicService = new HBaseBasicServiceImpl();
             ResultScanner res =hBaseBasicService.scantable(hbBaseUtils.TABLE_NAME);
             for (Result ress : res) {
                 JsonObject jsonObject=new JsonObject();
@@ -85,7 +86,6 @@ public class HBaseNewsServiceImpl implements HBaseNewsService {
         JsonObject object=new JsonObject();
         try {
             HBaseUtils hbBaseUtils = new HBaseUtils();
-            HBaseBasicServiceImpl hBaseBasicService = new HBaseBasicServiceImpl();
             ResultScanner res=hBaseBasicService.QualifierFilter(hbBaseUtils.TABLE_NAME, hbBaseUtils.cf1_author);
             for (Result ress : res) {
                 JsonObject jsonObject = new JsonObject();
@@ -111,7 +111,6 @@ public class HBaseNewsServiceImpl implements HBaseNewsService {
         JsonObject object=new JsonObject();
         try {
             HBaseUtils hbBaseUtils = new HBaseUtils();
-            HBaseBasicServiceImpl hBaseBasicService = new HBaseBasicServiceImpl();
             ResultScanner res=hBaseBasicService.QualifierFilter(hbBaseUtils.TABLE_NAME, hbBaseUtils.cf1_newTitle);
             for (Result ress : res) {
                 JsonObject jsonObject = new JsonObject();
@@ -136,7 +135,6 @@ public class HBaseNewsServiceImpl implements HBaseNewsService {
         JsonObject object=new JsonObject();
         try {
             HBaseUtils hbBaseUtils = new HBaseUtils();
-            HBaseBasicServiceImpl hBaseBasicService = new HBaseBasicServiceImpl();
             hBaseBasicService.RowFilter(hbBaseUtils.TABLE_NAME, rowKey);
             ResultScanner res = hBaseBasicService.WhileMatchbycolumnFilter(hbBaseUtils.TABLE_NAME,rowKey);
             for (Result ress : res) {
@@ -162,7 +160,6 @@ public class HBaseNewsServiceImpl implements HBaseNewsService {
         JsonObject object=new JsonObject();
         try {
             HBaseUtils hbBaseUtils = new HBaseUtils();
-            HBaseBasicServiceImpl hBaseBasicService = new HBaseBasicServiceImpl();
             hBaseBasicService.RowFilter(hbBaseUtils.TABLE_NAME, newTitle);
             ResultScanner res = hBaseBasicService.WhileMatchbycolumnFilter(hbBaseUtils.TABLE_NAME,newTitle);
             for (Result ress : res) {
@@ -188,7 +185,6 @@ public class HBaseNewsServiceImpl implements HBaseNewsService {
         JsonObject object=new JsonObject();
         try {
             HBaseUtils hbBaseUtils = new HBaseUtils();
-            HBaseBasicServiceImpl hBaseBasicService = new HBaseBasicServiceImpl();
             hBaseBasicService.RowFilter(hbBaseUtils.TABLE_NAME, newType);
             ResultScanner res = hBaseBasicService.WhileMatchbycolumnFilter(hbBaseUtils.TABLE_NAME,newType);
             for (Result ress : res) {
@@ -214,7 +210,6 @@ public class HBaseNewsServiceImpl implements HBaseNewsService {
         JsonObject object=new JsonObject();
         try {
             HBaseUtils hbBaseUtils = new HBaseUtils();
-            HBaseBasicServiceImpl hBaseBasicService = new HBaseBasicServiceImpl();
             hBaseBasicService.RowFilter(hbBaseUtils.TABLE_NAME, author);
             ResultScanner res = hBaseBasicService.WhileMatchbycolumnFilter(hbBaseUtils.TABLE_NAME,author);
             for (Result ress : res) {

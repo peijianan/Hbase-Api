@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Connection;
@@ -19,7 +18,6 @@ import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.filter.BinaryComparator;
-import org.apache.hadoop.hbase.filter.ColumnPrefixFilter;
 import org.apache.hadoop.hbase.filter.FamilyFilter;
 import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.filter.FirstKeyOnlyFilter;
@@ -32,7 +30,10 @@ import org.apache.hadoop.hbase.filter.SkipFilter;
 import org.apache.hadoop.hbase.filter.TimestampsFilter;
 import org.apache.hadoop.hbase.filter.CompareFilter.CompareOp;
 import org.apache.hadoop.hbase.util.Bytes;
-import org.apache.hadoop.yarn.webapp.example.HelloWorld.Hello;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 /*
  * 
  * 在使用完该类之后请使用Breakconnection() 方法断开连接
@@ -41,30 +42,12 @@ import org.apache.hadoop.yarn.webapp.example.HelloWorld.Hello;
  * 
  * 
  * */
+@Service
 public class HBaseBasicServiceImpl implements HBaseBasicService {
-	  Configuration conf;   
-	  Connection connection; 
-	  HBaseAdmin hba ;
-    public HBaseBasicServiceImpl() throws Exception {
-    	 conf=HBaseConfiguration.create();
-		   
-			conf.set("hbase.zookeeper.quorum","47.107.174.124,47.107.166.42,119.23.249.129,120.77.223.42");  //节点参数
-	        conf.set("hbase.zookeeper.property.clientPort","2181");
-	        connection=ConnectionFactory.createConnection(conf);
-	       
-	       
-	} 
-  /* public Connection HBaseConnect() throws IOException {  //这里的构造那个方法可以直接返回connection 
-			Configuration conf=HBaseConfiguration.create();
-		   // conf.set("hbase.master", "47.107.174.124:60000");
-			conf.set("hbase.zookeeper.quorum"," 47.107.174.124,47.107.166.42,119.23.249.129,120.77.223.42");  //节点参数
-	        conf.set("hbase.zookeeper.property.clientPort","2181");
-	        connection=ConnectionFactory.createConnection(conf);
-	      //  hba = new HBaseAdmin(conf);
-	    
-	        return connection;
-		}*/
-   
+
+	@Autowired
+	private Connection connection;
+
     public void Breakconnection() throws IOException {  //在完成操作后要断开连接
    	// hba.close();
 		 connection.close(); 
@@ -144,6 +127,7 @@ public class HBaseBasicServiceImpl implements HBaseBasicService {
 		TableName tName = TableName.valueOf(tableName);
     	//if(hba.tableExists(tName)) 
     	Scan scan=new Scan();
+
         HTable scTable = (HTable) connection.getTable(tName);
         ResultScanner rs = ((HTable) scTable).getScanner(scan);
         

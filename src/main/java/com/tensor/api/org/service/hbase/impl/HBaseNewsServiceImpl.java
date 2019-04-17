@@ -3,14 +3,18 @@ package com.tensor.api.org.service.hbase.impl;
 import com.google.gson.JsonObject;
 import com.tensor.api.org.enpity.News;
 import com.tensor.api.org.enpity.ResultData;
+import com.tensor.api.org.service.hbase.HBaseBasicService;
 import com.tensor.api.org.service.hbase.HBaseNewsService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service(value = "HBaseNewsService")
 public class HBaseNewsServiceImpl implements HBaseNewsService {
+
+    @Autowired private HBaseBasicService hBaseBasicService;
 
     @Override
     public Mono<ResultData<Boolean>> putNews(News news) {
@@ -33,7 +37,7 @@ public class HBaseNewsServiceImpl implements HBaseNewsService {
     @Override
     public Mono<ResultData<JsonObject>> getAllTitle() {
         Mono<ResultData<JsonObject>> dataMono = Mono.empty();
-        return dataMono;
+        return Mono.empty();
     }
 
     @Override

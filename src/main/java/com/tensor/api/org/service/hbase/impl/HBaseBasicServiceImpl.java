@@ -33,6 +33,7 @@ import org.apache.hadoop.hbase.filter.TimestampsFilter;
 import org.apache.hadoop.hbase.filter.CompareFilter.CompareOp;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.yarn.webapp.example.HelloWorld.Hello;
+import org.springfranework.stereotype.Service;
 /*
  * 
  * 在使用完该类之后请使用Breakconnection() 方法断开连接
@@ -41,6 +42,7 @@ import org.apache.hadoop.yarn.webapp.example.HelloWorld.Hello;
  * 
  * 
  * */
+@Service
 public class HBaseBasicServiceImpl implements HBaseBasicService {
 	  Configuration conf;   
 	  Connection connection; 

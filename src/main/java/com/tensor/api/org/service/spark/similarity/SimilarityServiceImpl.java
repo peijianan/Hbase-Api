@@ -1,15 +1,15 @@
 package com.tensor.api.org.service.spark.similarity;
 
+import com.google.common.primitives.Ints;
 import com.tensor.api.org.enpity.News;
 import com.tensor.api.org.service.spark.base.BaseSparkServiceImpl;
-import com.tensor.api.org.service.spark.statistics.StatisticServiceImpl;
+import com.tensor.api.org.service.spark.statistics.StatisticsService;
+import com.tensor.api.org.service.spark.statistics.StatisticsServiceImpl;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFunction;
-import org.spark_project.guava.primitives.Ints;
 import org.springframework.data.annotation.Transient;
 import scala.Tuple2;
 
@@ -30,7 +30,6 @@ public class SimilarityServiceImpl extends BaseSparkServiceImpl implements Simil
     public int getSimilarityOfTwo(JavaPairRDD<String, Integer> article1, JavaPairRDD<String, Integer> article2) {
         BigInteger simHashResult1 = getSimHashValue(article1);
         BigInteger simHashResult2 = getSimHashValue(article2);
-
         return hammingDistance(simHashResult1, simHashResult2);
     }
 
@@ -41,63 +40,42 @@ public class SimilarityServiceImpl extends BaseSparkServiceImpl implements Simil
 
         JavaPairRDD<Long, Integer> result = allArticles
                 //映射成newsId-newsContent形式
-                .mapToPair(new PairFunction<News, Long, JavaPairRDD<String, Integer>>() {
-                    @Override
-                    public Tuple2<Long, JavaPairRDD<String, Integer>> call(News news) throws Exception {
-                        return new Tuple2<>(news.getId(), new StatisticServiceImpl().getWordFrequency(news));
-                    }
-                })
+                .mapToPair((PairFunction<News, Long, JavaPairRDD<String, Integer>>) news -> new Tuple2<>(news.getId(), new StatisticsServiceImpl().getWordFrequency(news)))
                 //计算simHash值,结果为newsId-newsSimHashValue形式
-                .mapValues(new Function<JavaPairRDD<String, Integer>, BigInteger>() {
-                    @Override
-                    public BigInteger call(JavaPairRDD<String, Integer> v1) throws Exception {
-                        return getSimHashValue(v1);
-                    }
-                })
+                .mapValues((Function<JavaPairRDD<String, Integer>, BigInteger>) this::getSimHashValue)
                 // 计算海明距离，结果为newsId-hammingDistance形式
-                .mapValues(new Function<BigInteger, Integer>() {
-                    @Override
-                    public Integer call(BigInteger v1) throws Exception {
-                        return hammingDistance(v1, simHashResult1);
-                    }
-                })
+                .mapValues((Function<BigInteger, Integer>) v1 -> hammingDistance(v1, simHashResult1))
                 //键值位置互换，形式变成hammingDistance-newsId形式
-                .mapToPair(new PairFunction<Tuple2<Long, Integer>, Integer, Long>() {
-                    @Override
-                    public Tuple2<Integer, Long> call(Tuple2<Long, Integer> longIntegerTuple2) throws Exception {
-                        return new Tuple2<>(longIntegerTuple2._2, longIntegerTuple2._1);
-                    }
-                })
+                .mapToPair((PairFunction<Tuple2<Long, Integer>, Integer, Long>) longIntegerTuple2 -> new Tuple2<>(longIntegerTuple2._2, longIntegerTuple2._1))
                 //按照海明距离排序
-                .sortByKey(new Comparator<Integer>() {
-                    @Override
-                    public int compare(Integer v1, Integer v2) {
-                        if (v1.equals(v2)) {
-                            return 0;
-                        } else if (v1 > v2) {
-                            return 1;
-                        } else {
-                            return -1;
-                        }
+                .sortByKey((v1, v2) -> {
+                    if (v1.equals(v2)) {
+                        return 0;
+                    } else if (v1 > v2) {
+                        return 1;
+                    } else {
+                        return -1;
                     }
                 })
                 //再把键值对顺序换回来
-                .mapToPair(new PairFunction<Tuple2<Integer, Long>, Long, Integer>() {
-                    @Override
-                    public Tuple2<Long, Integer> call(Tuple2<Integer, Long> integerLongTuple2) throws Exception {
-                        return  new Tuple2<>(integerLongTuple2._2, integerLongTuple2._1);
-                    }
-                });
-
+                .mapToPair((PairFunction<Tuple2<Integer, Long>, Long, Integer>) integerLongTuple2 -> new Tuple2<>(integerLongTuple2._2, integerLongTuple2._1));
         //debug
         System.out.println("ok");
         return result;
 
     }
 
-    private BigInteger getSimHashValue(JavaPairRDD<String, Integer> wordFrequency) {
+    private BigInteger getSimHashValue(JavaPairRDD<String, Integer> sentenceFrequency) {
+        StatisticsService statisticsService= new StatisticsServiceImpl();
 
-        List<Integer> valueList = wordFrequency.map((Function<Tuple2<String, Integer>, List<Integer>>) stringIntegerTuple2 -> {
+        //长句列表连接在一起，作为参数传给StatisticsService获取词频
+        String trimmedArticle = sentenceFrequency.keys().reduce((Function2<String, String, String>) (v1, v2) -> v1.concat(".").concat(v2));
+
+        JavaPairRDD<String, Integer> trimmedWords = statisticsService.getWordFrequency(trimmedArticle);
+        //debug
+        trimmedWords.foreach((tuple2)-> System.out.println("单词" + tuple2._1 + " , 出现次数： " + tuple2._2));
+
+        List<Integer> valueList = trimmedWords.map((Function<Tuple2<String, Integer>, List<Integer>>) stringIntegerTuple2 -> {
             BigInteger t = getSimpleHashValue(stringIntegerTuple2._1);
             BigInteger bitmask = new BigInteger("1");
             Integer[] v = new Integer[DEFAULT_HASH_BITS];
@@ -149,7 +127,7 @@ public class SimilarityServiceImpl extends BaseSparkServiceImpl implements Simil
     }
 
     private BigInteger getSimpleHashValue(String str) {
-        if (str == null || str.length() == 0) {
+        if (str == null || str.trim().length() == 0) {
             return new BigInteger("0");
         } else {
             char[] sourceArray = str.toCharArray();

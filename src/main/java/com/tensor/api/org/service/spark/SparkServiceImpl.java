@@ -2,10 +2,12 @@ package com.tensor.api.org.service.spark;
 
 import com.tensor.api.org.enpity.News;
 import com.tensor.api.org.service.spark.base.BaseSparkServiceImpl;
+import com.tensor.api.org.service.spark.similarity.SimilarityService;
 import com.tensor.api.org.service.spark.similarity.SimilarityServiceImpl;
 import com.tensor.api.org.service.spark.statistics.StatisticsService;
 import com.tensor.api.org.service.spark.statistics.StatisticsServiceImpl;
 import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.function.PairFunction;
 import org.apache.spark.api.java.function.VoidFunction;
 import scala.Tuple2;
 
@@ -29,13 +31,13 @@ public class SparkServiceImpl implements SparkService{
         BaseSparkServiceImpl.init();
         StatisticsService statisticsService = new StatisticsServiceImpl();
 
-        JavaPairRDD<String , Integer> wordFrequency1 = statisticsService.getWordFrequency(news);
-
-        System.out.println(wordFrequency1.count());
+        //获取其中最长的若干句
+        JavaPairRDD<String , Integer> longestSentences = statisticsService.getLongestSentences(news)
+                .mapToPair((PairFunction<String, String, Integer>) s -> new Tuple2<>(s , 1));
 
         SimilarityServiceImpl similarityService = new SimilarityServiceImpl();
         //此时已经排好序
-        JavaPairRDD<Long , Integer>  similarNewsIdRDD = similarityService.getSimilarityList(wordFrequency1);
+        JavaPairRDD<Long , Integer>  similarNewsIdRDD = similarityService.getSimilarityList(longestSentences);
         List<News> newsList = new ArrayList<>();
         similarNewsIdRDD.foreach(new VoidFunction<Tuple2<Long, Integer>>() {
             @Override
@@ -45,5 +47,21 @@ public class SparkServiceImpl implements SparkService{
             }
         });
         return newsList;
+    }
+
+    @Override
+    public int getSimilarityOfTwo(News news1, News news2) {
+        BaseSparkServiceImpl.init();
+        StatisticsService statisticsService = new StatisticsServiceImpl();
+
+        JavaPairRDD<String , Integer> sentenceFrequency1 = statisticsService.getLongestSentences(news1)
+                .mapToPair((PairFunction<String, String, Integer>) s -> new Tuple2<>(s , 1));
+        JavaPairRDD<String , Integer> sentenceFrequency2 = statisticsService.getLongestSentences(news2)
+                .mapToPair((PairFunction<String, String, Integer>) s -> new Tuple2<>(s , 1));
+
+        SimilarityService similarityService = new SimilarityServiceImpl();
+        int hammingResult = similarityService.getSimilarityOfTwo(sentenceFrequency1 , sentenceFrequency2);
+        System.out.println("海明距离： " + hammingResult);
+        return hammingResult;
     }
 }

@@ -24,4 +24,11 @@ public interface SparkService {
      * @return List类型相似新闻列表
      */
     List<News> getSimilarity(News news);
+    /**
+     * 将参数新闻与已有的全部新闻对比，返回相似度最高的新闻列表
+     * @param news1 指定新闻1
+     * @param news2 指定新闻2
+     * @return 两者的相似度
+     */
+    int getSimilarityOfTwo(News news1 , News news2);
 }

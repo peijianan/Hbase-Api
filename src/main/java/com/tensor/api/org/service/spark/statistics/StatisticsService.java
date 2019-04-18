@@ -18,6 +18,17 @@ public interface StatisticsService {
      * @return 词频统计结果rdd
      */
     JavaPairRDD<String , Integer> getWordFrequency(News article);
+
+
+    /**
+     * 为了按句子实行simHash做的
+     *
+     * 获取某一句的词频统计结果
+     *
+     * @param sentence 句子
+     * @return 词频统计结果
+     */
+    JavaPairRDD<String , Integer> getWordFrequency(String sentence);
     /**
      * 获取句子频率
      *
@@ -25,6 +36,8 @@ public interface StatisticsService {
      * @return 将整篇文章分成句子后的统计结果rdd
      */
     JavaPairRDD<String , Integer> getSentenceFrequency(News article);
+
+
     /**
      * 重载方法，获取句子频率，并指定作为句子分隔符的正则表达式
      *
@@ -33,4 +46,11 @@ public interface StatisticsService {
      * @return 将整篇文章分成句子后的统计结果rdd
      */
     JavaPairRDD<String , Integer> getSentenceFrequency(News article , String splitPattern);
+
+    /**
+     * 获取文章中最长的若干句
+     * @param article 文章
+     * @return 最长若干句的文本内容。
+     */
+    JavaRDD<String> getLongestSentences(News article);
 }

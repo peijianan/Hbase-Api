@@ -1,6 +1,5 @@
-package com.tensor.api.org.service.hbase.impl;
+package hbase;
 
-import com.tensor.api.org.service.hbase.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,16 +32,14 @@ import org.apache.hadoop.hbase.filter.TimestampsFilter;
 import org.apache.hadoop.hbase.filter.CompareFilter.CompareOp;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.yarn.webapp.example.HelloWorld.Hello;
-import org.springfranework.stereotype.Service;
 /*
  * 
- * åœ¨ä½¿ç”¨å®Œè¯¥ç±»ä¹‹åè¯·ä½¿ç”¨Breakconnection() æ–¹æ³•æ–­å¼€è¿æ¥
+ * ÔÚÊ¹ÓÃÍê¸ÃÀàÖ®ºóÇëÊ¹ÓÃBreakconnection() ·½·¨¶Ï¿ªÁ¬½Ó
  * 
  * 
  * 
  * 
  * */
-@Service
 public class HBaseBasicServiceImpl implements HBaseBasicService {
 	  Configuration conf;   
 	  Connection connection; 
@@ -50,16 +47,16 @@ public class HBaseBasicServiceImpl implements HBaseBasicService {
     public HBaseBasicServiceImpl() throws Exception {
     	 conf=HBaseConfiguration.create();
 		   
-			conf.set("hbase.zookeeper.quorum","47.107.174.124,47.107.166.42,119.23.249.129,120.77.223.42");  //èŠ‚ç‚¹å‚æ•°
+			conf.set("hbase.zookeeper.quorum","47.107.174.124,47.107.166.42,119.23.249.129,120.77.223.42");  //½Úµã²ÎÊı
 	        conf.set("hbase.zookeeper.property.clientPort","2181");
 	        connection=ConnectionFactory.createConnection(conf);
 	       
 	       
 	} 
-  /* public Connection HBaseConnect() throws IOException {  //è¿™é‡Œçš„æ„é€ é‚£ä¸ªæ–¹æ³•å¯ä»¥ç›´æ¥è¿”å›connection 
+  /* public Connection HBaseConnect() throws IOException {  //ÕâÀïµÄ¹¹ÔìÄÇ¸ö·½·¨¿ÉÒÔÖ±½Ó·µ»Øconnection 
 			Configuration conf=HBaseConfiguration.create();
 		   // conf.set("hbase.master", "47.107.174.124:60000");
-			conf.set("hbase.zookeeper.quorum"," 47.107.174.124,47.107.166.42,119.23.249.129,120.77.223.42");  //èŠ‚ç‚¹å‚æ•°
+			conf.set("hbase.zookeeper.quorum"," 47.107.174.124,47.107.166.42,119.23.249.129,120.77.223.42");  //½Úµã²ÎÊı
 	        conf.set("hbase.zookeeper.property.clientPort","2181");
 	        connection=ConnectionFactory.createConnection(conf);
 	      //  hba = new HBaseAdmin(conf);
@@ -67,16 +64,16 @@ public class HBaseBasicServiceImpl implements HBaseBasicService {
 	        return connection;
 		}*/
    
-    public void Breakconnection() throws IOException {  //åœ¨å®Œæˆæ“ä½œåè¦æ–­å¼€è¿æ¥
+    public void Breakconnection() throws IOException {  //ÔÚÍê³É²Ù×÷ºóÒª¶Ï¿ªÁ¬½Ó
    	// hba.close();
 		 connection.close(); 
 	}
 
 	@Override
 	public Result getdata(String tableName, String rowkey, String cf, String cloumn) throws Exception {
-		 Table tName = connection.getTable(TableName.valueOf(tableName)); //æŒ‡å®šè¡¨å
-	     	Get get = new Get(Bytes.toBytes(rowkey)); //æŒ‡å®šè¡Œé”®
-	     	get.addColumn(cf.getBytes(), cloumn.getBytes());//æŒ‡å®šåˆ—
+		 Table tName = connection.getTable(TableName.valueOf(tableName)); //Ö¸¶¨±íÃû
+	     	Get get = new Get(Bytes.toBytes(rowkey)); //Ö¸¶¨ĞĞ¼ü
+	     	get.addColumn(cf.getBytes(), cloumn.getBytes());//Ö¸¶¨ÁĞ
 	     	System.out.println("hello in getdata");
 	        Result result = tName.get(get);
 		return result;
@@ -84,7 +81,7 @@ public class HBaseBasicServiceImpl implements HBaseBasicService {
 
 	@Override
 	public boolean putdata(String tableName, String rowkey, String cf, String cloumn, String value) throws Exception {
-		//å­˜æ•°æ®
+		//´æÊı¾İ
 		 try{
 			 Table tName = connection.getTable(TableName.valueOf(tableName));
 		     org.apache.hadoop.hbase.client. Put put = new org.apache.hadoop.hbase.client. Put(Bytes.toBytes(rowkey));
@@ -99,7 +96,7 @@ public class HBaseBasicServiceImpl implements HBaseBasicService {
 
 	@Override
 	public boolean delData(String tableName, String rowkey, String cf, String cloumn)throws Exception {
-		//åˆ æ•°æ®
+		//É¾Êı¾İ
 	    try {
 	    	Table tName= connection.getTable(TableName.valueOf(tableName));
 	 	    Delete delete =new Delete(rowkey.getBytes());
@@ -114,7 +111,7 @@ public class HBaseBasicServiceImpl implements HBaseBasicService {
 
 	@Override
 	public boolean delRow(String tableName, String rowkey)throws Exception {
-		//åˆ é™¤ä¸€æ•´è¡Œ
+		//É¾³ıÒ»ÕûĞĞ
 		try {
 			 Table table= connection.getTable(TableName.valueOf(tableName));
 			 Delete delete =new Delete(Bytes.toBytes(rowkey));
@@ -127,7 +124,7 @@ public class HBaseBasicServiceImpl implements HBaseBasicService {
 
 	@Override
 	public boolean delfamily(String tableName, String rowkey, String cf) throws Exception{
-		//åˆ é™¤æŸä¸€åˆ—
+		//É¾³ıÄ³Ò»ÁĞ
 		try {
 			   Table table= connection.getTable(TableName.valueOf(tableName));
 			   Delete delete =new Delete(rowkey.getBytes());
@@ -142,7 +139,7 @@ public class HBaseBasicServiceImpl implements HBaseBasicService {
 
 	@Override
 	public ResultScanner scantable(String tableName) throws Exception {
-		//æ‰«ææ•´å¼ è¡¨
+		//É¨ÃèÕûÕÅ±í
 		TableName tName = TableName.valueOf(tableName);
     	//if(hba.tableExists(tName)) 
     	Scan scan=new Scan();
@@ -154,7 +151,7 @@ public class HBaseBasicServiceImpl implements HBaseBasicService {
 
 	@Override
 	public ResultScanner scantable(String tableName, String startrowkey, String stoprowkey)throws Exception {
-		//æ ¹æ®èµ·å§‹è¡Œå’Œåœæ­¢è¡Œæ‰«æ
+		//¸ù¾İÆğÊ¼ĞĞºÍÍ£Ö¹ĞĞÉ¨Ãè
 		TableName tName = TableName.valueOf(tableName);
     	
         Scan scan=new Scan(startrowkey.getBytes(), stoprowkey.getBytes());
@@ -165,7 +162,7 @@ public class HBaseBasicServiceImpl implements HBaseBasicService {
 
 	@Override
 	public ResultScanner scantable(String tableName, String startrowkey)throws Exception {
-		//æ ¹æ®èµ·å§‹è¡Œé”®æ‰«æè‡³è¡¨å°¾
+		//¸ù¾İÆğÊ¼ĞĞ¼üÉ¨ÃèÖÁ±íÎ²
 		TableName tName = TableName.valueOf(tableName);
     	Scan scan=new Scan(startrowkey.getBytes());
         HTable scTable = (HTable) connection.getTable(tName);
@@ -176,7 +173,7 @@ public class HBaseBasicServiceImpl implements HBaseBasicService {
 
 	@Override
 	public long count(String tableName)throws Exception {
-		//ç»Ÿè®¡è¡Œæ•°
+		//Í³¼ÆĞĞÊı
 		 Table table = connection.getTable(TableName.valueOf(tableName));
 		   Scan scan =new Scan(); 
 		   long rowCount = 0;
@@ -190,7 +187,7 @@ public class HBaseBasicServiceImpl implements HBaseBasicService {
 
 	@Override
 	public ResultScanner FamilyFilter(String tableName, String cf) throws Exception{
-		//åˆ—æ—è¿‡æ»¤å™¨
+		//ÁĞ×å¹ıÂËÆ÷
 		Table table = connection.getTable(TableName.valueOf(tableName));
     	Scan scan =new Scan();
     	FamilyFilter filter1= new FamilyFilter(CompareOp.EQUAL, new BinaryComparator(Bytes.toBytes(cf)));
@@ -201,7 +198,7 @@ public class HBaseBasicServiceImpl implements HBaseBasicService {
 
 	@Override
 	public ResultScanner QualifierFilter(String tableName, String column)throws Exception {
-		//åˆ—è¿‡æ»¤å™¨
+		//ÁĞ¹ıÂËÆ÷
 		Table table = connection.getTable(TableName.valueOf(tableName));
     	Scan scan =new Scan();
     	QualifierFilter filter = new QualifierFilter(CompareOp.EQUAL, new BinaryComparator(Bytes.toBytes(column)));
@@ -212,7 +209,7 @@ public class HBaseBasicServiceImpl implements HBaseBasicService {
 
 	@Override
 	public ResultScanner RowFilter(String tableName, String row) throws Exception{
-		//è¡Œé”®è¿‡æ»¤å™¨
+		//ĞĞ¼ü¹ıÂËÆ÷
 		Table table = connection.getTable(TableName.valueOf(tableName));
     	Scan scan =new Scan();
     	RowFilter filter = new RowFilter(CompareOp.LESS_OR_EQUAL,  new BinaryComparator(Bytes.toBytes(row)));
@@ -238,7 +235,7 @@ public class HBaseBasicServiceImpl implements HBaseBasicService {
 		Scan scan = new Scan();		
 		Filter filter = new SkipFilter(new ValueFilter(CompareOp.NOT_EQUAL,new BinaryComparator(Bytes.toBytes("102"))));
 		//Filter filter = new SkipFilter(new DependentColumnFilter(Bytes.toBytes("course"), Bytes.toBytes("art"),false,CompareOp.NOT_EQUAL,new BinaryComparator(Bytes.toBytes("90"))));		
-		//è¯¥è¿‡æ»¤å™¨éœ€è¦é…åˆå…¶ä»–è¿‡æ»¤å™¨æ¥ä½¿ç”¨		s
+		//¸Ã¹ıÂËÆ÷ĞèÒªÅäºÏÆäËû¹ıÂËÆ÷À´Ê¹ÓÃ		s
 		scan.setFilter(filter);	
 		ResultScanner scanner = table.getScanner(scan);
 		return scanner;
@@ -247,7 +244,7 @@ public class HBaseBasicServiceImpl implements HBaseBasicService {
 
 	@Override
 	public ResultScanner TimestampsFilter(String tableName, List<Long> Timestamps) throws Exception {
-		//æ—¶é—´æˆ³
+		//Ê±¼ä´Á
 		Table table = connection.getTable(TableName.valueOf(tableName));	
 		Scan scan = new Scan();	
 	    Filter filter = new TimestampsFilter(Timestamps);		
@@ -260,10 +257,10 @@ public class HBaseBasicServiceImpl implements HBaseBasicService {
 	public ResultScanner TimestampsFilter(String tableName, Long Timestamps) throws Exception {
 		Table table = connection.getTable(TableName.valueOf(tableName));	
 		Scan scan = new Scan();	
-			//lsä¸­å­˜æ”¾æ‰€æœ‰éœ€è¦æŸ¥æ‰¾åŒ¹é…çš„æ—¶é—´æˆ³		
+			//lsÖĞ´æ·ÅËùÓĞĞèÒª²éÕÒÆ¥ÅäµÄÊ±¼ä´Á		
 		List<Long> ls = new ArrayList<Long>();		
 		ls.add(Timestamps);
-		//javaè¯­è¨€çš„æ•´å‹å¸¸é‡é»˜è®¤ä¸ºintå‹ï¼Œå£°æ˜longå‹å¸¸é‡å¯ä»¥ååŠ â€lâ€œæˆ–â€Lâ€œ		
+		//javaÓïÑÔµÄÕûĞÍ³£Á¿Ä¬ÈÏÎªintĞÍ£¬ÉùÃ÷longĞÍ³£Á¿¿ÉÒÔºó¼Ó¡±l¡°»ò¡±L¡°		
 		Filter filter = new TimestampsFilter(ls);		
 		scan.setFilter(filter);	
 		ResultScanner scanner = table.getScanner(scan);
@@ -304,7 +301,7 @@ public class HBaseBasicServiceImpl implements HBaseBasicService {
 
 	@Override
 	public ResultScanner ValueFilter(String tableName, String value) throws Exception {
-		//å€¼è¿‡æ»¤å™¨
+		//Öµ¹ıÂËÆ÷
 		Table table = connection.getTable(TableName.valueOf(tableName));
 		   Scan scan =new Scan(); 
 		   ValueFilter filter = new ValueFilter(CompareOp.EQUAL,new BinaryComparator(Bytes.toBytes(value)));

@@ -1,5 +1,6 @@
 package com.tensor.api.org.enpity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
@@ -8,6 +9,7 @@ import lombok.Data;
  */
 @Data
 @Builder
+@AllArgsConstructor
 public class ResultData<T> {
 
     private int code;

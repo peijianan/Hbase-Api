@@ -20,6 +20,7 @@ import java.util.*;
  * @date 2019/4/3
  */
 public class StatisticServiceImpl extends BaseSparkServiceImpl implements StatisticsService {
+
     private static final String DEFAULT_SENTENCE_SPLIT_PATTERN = "([.\n]+\\s?)";
     /**
      * 词频统计
@@ -46,6 +47,11 @@ public class StatisticServiceImpl extends BaseSparkServiceImpl implements Statis
 //            System.out.println(r._1 + " -- " + r._2);
 //        }
         return result;
+    }
+
+    @Override
+    public JavaPairRDD<String, Integer> getWordFrequency(String sentence) {
+        return null;
     }
 
     /**
@@ -75,5 +81,10 @@ public class StatisticServiceImpl extends BaseSparkServiceImpl implements Statis
             System.out.println(r._1 + " -- " + r._2);
         }
         return result;
+    }
+
+    @Override
+    public JavaRDD<String> getLongestSentences(News article) {
+        return null;
     }
 }

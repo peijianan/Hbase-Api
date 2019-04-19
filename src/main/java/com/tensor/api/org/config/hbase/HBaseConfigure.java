@@ -6,6 +6,7 @@ import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.springframework.context.annotation.Bean;
 
+@org.springframework.context.annotation.Configuration
 public class HBaseConfigure {
 
     @Bean(value = "HbaseConnection")

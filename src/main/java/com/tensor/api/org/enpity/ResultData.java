@@ -14,4 +14,18 @@ public class ResultData<T> {
     private T data;
     private String msg;
 
+    public ResultData() {
+    }
+
+    public void setData(T data) {
+        this.data = data;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
 }

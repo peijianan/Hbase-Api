@@ -16,5 +16,6 @@ public class News {
     private String author;
     private String text;
     private String hashCode;
+        
 
 }

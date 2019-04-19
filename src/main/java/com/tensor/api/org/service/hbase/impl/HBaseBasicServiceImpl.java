@@ -34,14 +34,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/*
- * 
- * 在使用完该类之后请使用Breakconnection() 方法断开连接
- * 
- * 
- * 
- * 
- * */
+
 @Service
 public class HBaseBasicServiceImpl implements HBaseBasicService {
 

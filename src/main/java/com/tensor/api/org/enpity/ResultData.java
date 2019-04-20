@@ -1,5 +1,6 @@
 package com.tensor.api.org.enpity;
 
+import com.tensor.api.org.util.ResultCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,5 +30,10 @@ public class ResultData<T> {
 
     public void setMsg(String msg) {
         this.msg = msg;
+    }
+
+    public void buildFromResultCode(ResultCode code) {
+        this.code = code.getCode();
+        this.msg = code.getDesc();
     }
 }

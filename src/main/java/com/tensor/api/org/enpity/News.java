@@ -1,13 +1,17 @@
 package com.tensor.api.org.enpity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author liaochuntao
  */
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class News {
 
     private long id;

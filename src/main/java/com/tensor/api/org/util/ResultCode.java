@@ -1,6 +1,7 @@
 package com.tensor.api.org.util;
 
 public enum  ResultCode {
+    STORAGE_FAILURE(1000, "HBase存储失败")
     ;
 
     private int code;

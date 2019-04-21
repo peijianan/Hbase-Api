@@ -1,4 +1,4 @@
-package com.tensor.api.org.service.hbase.impl;
+package com.tensor.api.org.util;
 
 
 import java.util.*;
@@ -10,14 +10,14 @@ import org.apache.hadoop.hbase.util.Bytes;
 public class HBaseUtils {
 
     public static String TABLE_NAME = "News";
-    public static String cf1;
-    public static String cf2;
-    public static String id = "id";
-    public static String cf1_newTitle = "newTitle";
-    public static String cf1_newType = "newType";
-    public static String cf1_author = "author";
-    public static String cf1_text = "text";
-    public static String cf_2_hash_code;
+    public static final String cf1 = "cf1";
+    public static final String cf2 = "cf2";
+    public static final String id = "id";
+    public static final String cf1_newTitle = "newTitle";
+    public static final String cf1_newType = "newType";
+    public static final String cf1_author = "author";
+    public static final String cf1_text = "text";
+    public static final String cf_2_hash_code = "";
 
 
     //设置表名

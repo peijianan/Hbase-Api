@@ -6,6 +6,7 @@ import com.tensor.api.org.enpity.News;
 import com.tensor.api.org.enpity.ResultData;
 import com.tensor.api.org.service.hbase.HBaseBasicService;
 import com.tensor.api.org.service.hbase.HBaseNewsService;
+import com.tensor.api.org.util.HBaseUtils;
 import com.tensor.api.org.util.ResultCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.hbase.client.Result;

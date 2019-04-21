@@ -12,14 +12,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.test.context.junit4.SpringRunner;
 import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service(value = "HBaseNewsService")
-
+@RunWith(SpringRunner.class)
+@SpringBootTest
 /**
  * @author peijianan
  */
@@ -30,17 +34,17 @@ public class HBaseNewsServiceImpl implements HBaseNewsService {
     private HBaseBasicService hBaseBasicService;
 
     @Override
-    public Mono<ResultData<Boolean>> putNews(News news) {
+    public Mono<ResultData<Boolean>> putNews(News news) {   //根据传入的参数将新闻插入数据库 返回是否成功
         ResultData resultData = new ResultData();
-        HBaseUtils hbBaseUtils = new HBaseUtils();
-        String id = hbBaseUtils.getGoodId();
         boolean flag;
         try {
+            HBaseUtils hbBaseUtils = new HBaseUtils();  //工具类utils，获取标记与rowkey
+            String id = hbBaseUtils.getGoodId();
             boolean a = hBaseBasicService.putdata(hbBaseUtils.TABLE_NAME, id, hbBaseUtils.cf1, hbBaseUtils.cf1_author, news.getAuthor());
             boolean b = hBaseBasicService.putdata(hbBaseUtils.TABLE_NAME, id, hbBaseUtils.cf1, hbBaseUtils.cf1_newType, news.getNewType());
             boolean c = hBaseBasicService.putdata(hbBaseUtils.TABLE_NAME, id, hbBaseUtils.cf1, hbBaseUtils.cf1_newTitle, news.getNewTitle());
             boolean d = hBaseBasicService.putdata(hbBaseUtils.TABLE_NAME, id, hbBaseUtils.cf1, hbBaseUtils.cf1_text, news.getText());
-            flag = a && b && c && d;
+            flag = a && b && c && d;    //判断是否都存储成功
             resultData.setData(flag);
             if (flag) {
                 resultData.setCode(HttpStatus.OK.value());
@@ -58,175 +62,201 @@ public class HBaseNewsServiceImpl implements HBaseNewsService {
 
 
     @Override
-    public Mono<ResultData<JsonObject>> getAllNews() {
+    public Mono<ResultData<JsonObject>> getAllNews() {  //读取全部新闻
         ResultData resultData = new ResultData();
-        JsonArray array = new JsonArray();
-        JsonObject object = new JsonObject();
         try {
             HBaseUtils hbBaseUtils = new HBaseUtils();
+            JsonArray array = new JsonArray();
             ResultScanner res = hBaseBasicService.scantable(hbBaseUtils.TABLE_NAME);
+            System.out.println("good");
             for (Result ress : res) {
+
                 JsonObject jsonObject = new JsonObject();
                 jsonObject = hbBaseUtils.jsonObjectTool(ress, jsonObject);
                 array.add(jsonObject);
 
             }
-
+            resultData.setData(array);
+            resultData.setCode(HttpStatus.OK.value());
+            resultData.setMsg("Ok!!!");
         } catch (Exception e) {
-            e.printStackTrace();
+            resultData.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            resultData.setMsg(e.getLocalizedMessage());
+            resultData.setData(false);
         }
-        object.add("data", array);
-        resultData.setData(object);
+
         return Mono.justOrEmpty(resultData);
     }
 
     @Override
-    public Mono<ResultData<JsonObject>> getAllAuthor() {
+    public Mono<ResultData<JsonObject>> getAllAuthor() {    //读取全部作者 返回 行键-作者
         Mono<ResultData<JsonObject>> dataMono = Mono.empty();
         ResultData resultData = new ResultData();
-        JsonArray array = new JsonArray();
-        JsonObject object = new JsonObject();
+
         try {
             HBaseUtils hbBaseUtils = new HBaseUtils();
+            JsonArray array = new JsonArray();
             ResultScanner res = hBaseBasicService.QualifierFilter(hbBaseUtils.TABLE_NAME, hbBaseUtils.cf1_author);
             for (Result ress : res) {
+
                 JsonObject jsonObject = new JsonObject();
-                jsonObject.addProperty("id", String.valueOf(ress.getValue(Bytes.toBytes(hbBaseUtils.cf1), Bytes.toBytes(hbBaseUtils.id))));
-                jsonObject.addProperty("author", String.valueOf(ress.getValue(Bytes.toBytes(hbBaseUtils.cf1), Bytes.toBytes(hbBaseUtils.cf1_author))));
+                jsonObject.addProperty("id",Bytes.toString(ress.getRow()));
+                jsonObject.addProperty("author", Bytes.toString(ress.getValue(Bytes.toBytes(hbBaseUtils.cf1), Bytes.toBytes(hbBaseUtils.cf1_author))));
                 array.add(jsonObject);
 
             }
-
+            resultData.setData(array);
+            resultData.setCode(HttpStatus.OK.value());
+            resultData.setMsg("OK!");
         } catch (Exception e) {
-            e.printStackTrace();
+            resultData.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            resultData.setMsg(e.getLocalizedMessage());
+            resultData.setData(false);
         }
-        object.add("data", array);
-        resultData.setData(object);
+        System.out.println(resultData);
         return Mono.justOrEmpty(resultData);
     }
 
     @Override
-    public Mono<ResultData<JsonObject>> getAllTitle() {
+    public Mono<ResultData<JsonObject>> getAllTitle() {     //读取全部标题 返回 行键-标题
         Mono<ResultData<JsonObject>> dataMono = Mono.empty();
         ResultData resultData = new ResultData();
-        JsonArray array = new JsonArray();
-        JsonObject object = new JsonObject();
         try {
             HBaseUtils hbBaseUtils = new HBaseUtils();
+            JsonArray array = new JsonArray();
             ResultScanner res = hBaseBasicService.QualifierFilter(hbBaseUtils.TABLE_NAME, hbBaseUtils.cf1_newTitle);
             for (Result ress : res) {
+
                 JsonObject jsonObject = new JsonObject();
-                jsonObject.addProperty("id", String.valueOf(ress.getValue(Bytes.toBytes(hbBaseUtils.cf1), Bytes.toBytes(hbBaseUtils.id))));
-                jsonObject.addProperty("newTitle", String.valueOf(ress.getValue(Bytes.toBytes(hbBaseUtils.cf1), Bytes.toBytes(hbBaseUtils.cf1_newTitle))));
+                jsonObject.addProperty("id", Bytes.toString(ress.getRow()));
+                jsonObject.addProperty("newTitle", Bytes.toString(ress.getValue(Bytes.toBytes(hbBaseUtils.cf1), Bytes.toBytes(hbBaseUtils.cf1_newTitle))));
                 array.add(jsonObject);
             }
-
+            resultData.setData(array);
+            resultData.setCode(HttpStatus.OK.value());
+            resultData.setMsg("OK!");
         } catch (Exception e) {
-            e.printStackTrace();
+            resultData.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            resultData.setMsg(e.getLocalizedMessage());
+            resultData.setData(false);
         }
-        object.add("data", array);
-        resultData.setData(resultData);
+        System.out.println(resultData);
         return Mono.justOrEmpty(resultData);
     }
 
     @Override
-    public Mono<ResultData<JsonObject>> getNewsByRowKey(String rowKey) {
+    public Mono<ResultData<JsonObject>> getNewsByRowKey(String rowKey) {    //根据行键读取新闻 返回对应新闻
         Mono<ResultData<JsonObject>> dataMono = Mono.empty();
         ResultData resultData = new ResultData();
-        JsonArray array = new JsonArray();
-        JsonObject object = new JsonObject();
+
         try {
+            JsonArray array = new JsonArray();
             HBaseUtils hbBaseUtils = new HBaseUtils();
             hBaseBasicService.RowFilter(hbBaseUtils.TABLE_NAME, rowKey);
             ResultScanner res = hBaseBasicService.WhileMatchbycolumnFilter(hbBaseUtils.TABLE_NAME, rowKey);
             for (Result ress : res) {
+
                 JsonObject jsonObject = new JsonObject();
                 jsonObject = hbBaseUtils.jsonObjectTool(ress, jsonObject);
                 array.add(jsonObject);
 
             }
-
+            resultData.setData(array);
+            resultData.setCode(HttpStatus.OK.value());
+            resultData.setMsg("OK!");
         } catch (Exception e) {
-            e.printStackTrace();
+            resultData.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            resultData.setMsg(e.getLocalizedMessage());
+            resultData.setData(false);
         }
-        object.add("data", array);
-        resultData.setData(object);
+        System.out.println(resultData);
         return Mono.justOrEmpty(resultData);
     }
 
     @Override
-    public Mono<ResultData<JsonObject>> getNewsByTitle(String newTitle) {
+    public Mono<ResultData<JsonObject>> getNewsByTitle(String newTitle) {   //根据标题读取新闻  返回对应新闻
         Mono<ResultData<JsonObject>> dataMono = Mono.empty();
         ResultData resultData = new ResultData();
-        JsonArray array = new JsonArray();
-        JsonObject object = new JsonObject();
         try {
+            JsonArray array = new JsonArray();
             HBaseUtils hbBaseUtils = new HBaseUtils();
             hBaseBasicService.RowFilter(hbBaseUtils.TABLE_NAME, newTitle);
             ResultScanner res = hBaseBasicService.WhileMatchbycolumnFilter(hbBaseUtils.TABLE_NAME, newTitle);
             for (Result ress : res) {
+
                 JsonObject jsonObject = new JsonObject();
                 jsonObject = hbBaseUtils.jsonObjectTool(ress, jsonObject);
                 array.add(jsonObject);
             }
 
-
+            resultData.setData(array);
+            resultData.setCode(HttpStatus.OK.value());
+            resultData.setMsg("OK!");
         } catch (Exception e) {
-            e.printStackTrace();
+            resultData.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            resultData.setMsg(e.getLocalizedMessage());
+            resultData.setData(false);
         }
-        object.add("data", array);
-        resultData.setData(object);
+
         return Mono.justOrEmpty(resultData);
 
     }
 
     @Override
-    public Mono<ResultData<JsonObject>> getNewsByType(String newType) {
+    public Mono<ResultData<JsonObject>> getNewsByType(String newType) {     //根据分类读新闻
         Mono<ResultData<JsonObject>> dataMono = Mono.empty();
         ResultData resultData = new ResultData();
         JsonArray array = new JsonArray();
-        JsonObject object = new JsonObject();
+
         try {
             HBaseUtils hbBaseUtils = new HBaseUtils();
             hBaseBasicService.RowFilter(hbBaseUtils.TABLE_NAME, newType);
             ResultScanner res = hBaseBasicService.WhileMatchbycolumnFilter(hbBaseUtils.TABLE_NAME, newType);
             for (Result ress : res) {
+
                 JsonObject jsonObject = new JsonObject();
                 jsonObject = hbBaseUtils.jsonObjectTool(ress, jsonObject);
                 array.add(jsonObject);
             }
 
-
+            resultData.setData(array);
+            resultData.setCode(HttpStatus.OK.value());
+            resultData.setMsg("OK!");
         } catch (Exception e) {
-            e.printStackTrace();
+            resultData.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            resultData.setMsg(e.getLocalizedMessage());
+            resultData.setData(false);
         }
-        object.add("data", array);
-        resultData.setData(object);
+
         return Mono.justOrEmpty(resultData);
     }
 
     @Override
-    public Mono<ResultData<JsonObject>> getNewsByAuthor(String author) {
+    public Mono<ResultData<JsonObject>> getNewsByAuthor(String author) {    //根据作者读新闻    返回对应新闻
         Mono<ResultData<JsonObject>> dataMono = Mono.empty();
         ResultData resultData = new ResultData();
         JsonArray array = new JsonArray();
-        JsonObject object = new JsonObject();
+
         try {
             HBaseUtils hbBaseUtils = new HBaseUtils();
             hBaseBasicService.RowFilter(hbBaseUtils.TABLE_NAME, author);
             ResultScanner res = hBaseBasicService.WhileMatchbycolumnFilter(hbBaseUtils.TABLE_NAME, author);
             for (Result ress : res) {
+
                 JsonObject jsonObject = new JsonObject();
                 jsonObject = hbBaseUtils.jsonObjectTool(ress, jsonObject);
                 array.add(jsonObject);
             }
-
+            resultData.setData(array);
+            resultData.setCode(HttpStatus.OK.value());
+            resultData.setMsg("OK!");
 
         } catch (Exception e) {
-            e.printStackTrace();
+            resultData.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            resultData.setMsg(e.getLocalizedMessage());
+            resultData.setData(false);
         }
-        object.add("data", array);
-        resultData.setData(object);
+
         return Mono.justOrEmpty(resultData);
 
 

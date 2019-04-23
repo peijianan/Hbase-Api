@@ -24,10 +24,8 @@ public final class SimHashAlogUtil {
         String str = newsBean.getText();
         KeyWordComputer kwc = new KeyWordComputer(TOP_K_KEY_WORD);
         Collection<Keyword> keyList = kwc.computeArticleTfidf(str);
-        System.out.println(keyList);
         Map<String, Double> keyWords = keyList.stream()
                 .collect(HashMap::new, (m, v) -> m.put(v.getName(), v.getScore()), HashMap::putAll);
-        System.out.println(keyWords);
         ArrayList<ArrayList<Integer>> keyScores = new ArrayList<>();
         keyWords.entrySet().stream().peek(entry -> {
             int weight = (int) (entry.getValue() * 20);
@@ -54,6 +52,7 @@ public final class SimHashAlogUtil {
                 simHash.append('0');
             }
         }).count();
+        log.info(simHash.toString());
         newsBean.setHashCode(simHash.toString());
         return newsBean;
     }
@@ -79,7 +78,6 @@ public final class SimHashAlogUtil {
     }
 
     private static ArrayList<Integer> sum(ArrayList<ArrayList<Integer>> tmp) {
-        System.out.println(tmp);
         return (ArrayList<Integer>) tmp
                 .stream()
                 .map(list -> list.stream()

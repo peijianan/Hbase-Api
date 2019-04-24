@@ -40,7 +40,7 @@ public final class SimHashAlogUtil {
             }
             keyScores.add(tmp);
         }).count();
-        ArrayList<Integer> answer = sum(keyScores);
+            ArrayList<Integer> answer = sum(keyScores);
         if (answer.isEmpty()) {
             newsBean.setHashCode("00");
         }

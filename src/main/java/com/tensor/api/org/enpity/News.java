@@ -14,12 +14,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class News {
 
-    private long id;
+    private Long id;
     private String newTitle;
     private String newType;
     private String author;
     private String text;
+    private String publishDate;
+    private String url;
+    private String source;
     private String hashCode;
-        
 
 }

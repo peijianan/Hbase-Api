@@ -4,26 +4,23 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.tensor.api.org.enpity.News;
 import com.tensor.api.org.enpity.ResultData;
+import com.tensor.api.org.enpity.mq.Message;
 import com.tensor.api.org.service.hbase.HBaseBasicService;
 import com.tensor.api.org.service.hbase.HBaseNewsService;
+import com.tensor.api.org.service.mq.ProducerService;
 import com.tensor.api.org.util.HBaseUtils;
 import com.tensor.api.org.util.ResultCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.util.Bytes;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.test.context.junit4.SpringRunner;
 import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service(value = "HBaseNewsService")
-@RunWith(SpringRunner.class)
-@SpringBootTest
 /**
  * @author peijianan
  */
@@ -33,8 +30,12 @@ public class HBaseNewsServiceImpl implements HBaseNewsService {
     @Autowired
     private HBaseBasicService hBaseBasicService;
 
+    @Autowired
+    private ProducerService producerService;
+
     @Override
     public Mono<ResultData<Boolean>> putNews(News news) {   //根据传入的参数将新闻插入数据库 返回是否成功
+        producerService.publish(news);
         ResultData resultData = new ResultData();
         boolean flag;
         try {
@@ -62,21 +63,19 @@ public class HBaseNewsServiceImpl implements HBaseNewsService {
 
 
     @Override
-    public Mono<ResultData<JsonObject>> getAllNews() {  //读取全部新闻
+    public Mono<ResultData<JsonArray>> getAllNews() {  //读取全部新闻
         ResultData resultData = new ResultData();
         try {
             HBaseUtils hbBaseUtils = new HBaseUtils();
             JsonArray array = new JsonArray();
             ResultScanner res = hBaseBasicService.scantable(hbBaseUtils.TABLE_NAME);
-            System.out.println("good");
             for (Result ress : res) {
 
                 JsonObject jsonObject = new JsonObject();
                 jsonObject = hbBaseUtils.jsonObjectTool(ress, jsonObject);
                 array.add(jsonObject);
-
             }
-            resultData.setData(array);
+            resultData.setData(array.toString());
             resultData.setCode(HttpStatus.OK.value());
             resultData.setMsg("Ok!!!");
         } catch (Exception e) {
@@ -90,7 +89,6 @@ public class HBaseNewsServiceImpl implements HBaseNewsService {
 
     @Override
     public Mono<ResultData<JsonObject>> getAllAuthor() {    //读取全部作者 返回 行键-作者
-        Mono<ResultData<JsonObject>> dataMono = Mono.empty();
         ResultData resultData = new ResultData();
 
         try {
@@ -119,7 +117,6 @@ public class HBaseNewsServiceImpl implements HBaseNewsService {
 
     @Override
     public Mono<ResultData<JsonObject>> getAllTitle() {     //读取全部标题 返回 行键-标题
-        Mono<ResultData<JsonObject>> dataMono = Mono.empty();
         ResultData resultData = new ResultData();
         try {
             HBaseUtils hbBaseUtils = new HBaseUtils();
@@ -146,7 +143,6 @@ public class HBaseNewsServiceImpl implements HBaseNewsService {
 
     @Override
     public Mono<ResultData<JsonObject>> getNewsByRowKey(String rowKey) {    //根据行键读取新闻 返回对应新闻
-        Mono<ResultData<JsonObject>> dataMono = Mono.empty();
         ResultData resultData = new ResultData();
 
         try {
@@ -175,7 +171,6 @@ public class HBaseNewsServiceImpl implements HBaseNewsService {
 
     @Override
     public Mono<ResultData<JsonObject>> getNewsByTitle(String newTitle) {   //根据标题读取新闻  返回对应新闻
-        Mono<ResultData<JsonObject>> dataMono = Mono.empty();
         ResultData resultData = new ResultData();
         try {
             JsonArray array = new JsonArray();
@@ -204,7 +199,6 @@ public class HBaseNewsServiceImpl implements HBaseNewsService {
 
     @Override
     public Mono<ResultData<JsonObject>> getNewsByType(String newType) {     //根据分类读新闻
-        Mono<ResultData<JsonObject>> dataMono = Mono.empty();
         ResultData resultData = new ResultData();
         JsonArray array = new JsonArray();
 
@@ -233,7 +227,6 @@ public class HBaseNewsServiceImpl implements HBaseNewsService {
 
     @Override
     public Mono<ResultData<JsonObject>> getNewsByAuthor(String author) {    //根据作者读新闻    返回对应新闻
-        Mono<ResultData<JsonObject>> dataMono = Mono.empty();
         ResultData resultData = new ResultData();
         JsonArray array = new JsonArray();
 

@@ -1,6 +1,6 @@
 package com.tensor.api.org.service.hbase;
 
-
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.tensor.api.org.enpity.News;
 import com.tensor.api.org.enpity.ResultData;
@@ -21,7 +21,7 @@ public interface HBaseNewsService {
      *
      * @return
      */
-    Mono<ResultData<JsonObject>> getAllNews();
+    Mono<ResultData<JsonArray>> getAllNews();
 
     /**
      * 读取全部作者 返回 行键-作者

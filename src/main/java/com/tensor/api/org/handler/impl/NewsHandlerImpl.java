@@ -1,5 +1,6 @@
 package com.tensor.api.org.handler.impl;
 
+import com.google.gson.JsonArray;
 import com.tensor.api.org.config.schedule.Schedule;
 import com.tensor.api.org.enpity.News;
 import com.tensor.api.org.enpity.ResultData;
@@ -13,6 +14,8 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+
+import java.util.function.Consumer;
 
 
 /**

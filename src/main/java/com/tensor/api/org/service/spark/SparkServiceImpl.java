@@ -39,12 +39,9 @@ public class SparkServiceImpl implements SparkService{
         //此时已经排好序
         JavaPairRDD<Long , Integer>  similarNewsIdRDD = similarityService.getSimilarityList(longestSentences);
         List<News> newsList = new ArrayList<>();
-        similarNewsIdRDD.foreach(new VoidFunction<Tuple2<Long, Integer>>() {
-            @Override
-            public void call(Tuple2<Long, Integer> longIntegerTuple2) throws Exception {
-                //todo:通过tuple2._1找到对应的新闻记录并加入到List中
-                newsList.add(News.builder().id(longIntegerTuple2._1).build());
-            }
+        similarNewsIdRDD.foreach((VoidFunction<Tuple2<Long, Integer>>) longIntegerTuple2 -> {
+            //todo:通过tuple2._1找到对应的新闻记录并加入到List中
+            newsList.add(News.builder().id(longIntegerTuple2._1).build());
         });
         return newsList;
     }

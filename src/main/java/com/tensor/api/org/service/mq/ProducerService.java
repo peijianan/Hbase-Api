@@ -3,8 +3,8 @@ package com.tensor.api.org.service.mq;
 
 public interface ProducerService {
 
-    <T> T publish(T data);
+    void register(String topic, ConsumerService consumerService);
 
-    void shutDown();
+    <T> T publish(T data);
 
 }

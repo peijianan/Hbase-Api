@@ -26,23 +26,6 @@ public class NewRouter {
     @Autowired
     private NewsHandler newsHandler;
 
-    @NacosInjected
-    private NamingService namingService;
-
-    @Value("${server.port}")
-    private int serverPort;
-
-    @Value("${spring.application.name}")
-    private String applicationName;
-
-    @Value("${nacos.discovery.cluster-name}")
-    private String clusterName;
-
-    @PostConstruct
-    public void registerInstance() throws NacosException {
-        namingService.registerInstance(applicationName, "127.0.0.1", serverPort, clusterName);
-    }
-
     @Bean(value = "StoreRouter")
     public RouterFunction StoreRouter() {
         return route(

@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.tensor.api.org.enpity.News;
 import com.tensor.api.org.enpity.ResultData;
-import com.tensor.api.org.enpity.mq.Message;
 import com.tensor.api.org.service.hbase.HBaseBasicService;
 import com.tensor.api.org.service.hbase.HBaseNewsService;
 import com.tensor.api.org.service.mq.ProducerService;
@@ -35,7 +34,6 @@ public class HBaseNewsServiceImpl implements HBaseNewsService {
 
     @Override
     public Mono<ResultData<Boolean>> putNews(News news) {   //根据传入的参数将新闻插入数据库 返回是否成功
-        producerService.publish(news);
         ResultData resultData = new ResultData();
         boolean flag;
         try {

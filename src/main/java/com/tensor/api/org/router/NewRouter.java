@@ -1,12 +1,18 @@
 package com.tensor.api.org.router;
 
+import com.alibaba.nacos.api.annotation.NacosInjected;
+import com.alibaba.nacos.api.exception.NacosException;
+import com.alibaba.nacos.api.naming.NamingService;
 import com.tensor.api.org.handler.NewsHandler;
 import com.tensor.api.org.util.StringConst;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.server.RouterFunction;
+
+import javax.annotation.PostConstruct;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.*;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
@@ -19,6 +25,23 @@ public class NewRouter {
 
     @Autowired
     private NewsHandler newsHandler;
+
+    @NacosInjected
+    private NamingService namingService;
+
+    @Value("${server.port}")
+    private int serverPort;
+
+    @Value("${spring.application.name}")
+    private String applicationName;
+
+    @Value("${nacos.discovery.cluster-name}")
+    private String clusterName;
+
+    @PostConstruct
+    public void registerInstance() throws NacosException {
+        namingService.registerInstance(applicationName, "127.0.0.1", serverPort, clusterName);
+    }
 
     @Bean(value = "StoreRouter")
     public RouterFunction StoreRouter() {

@@ -27,7 +27,7 @@ public class HBaseUtils {
     }
 
     //生成rowkey
-    public String getGoodId() {
+    public static String getGoodId() {
 
         Random rand = new Random();
         int rad = rand.nextInt(90) + 10;    //两位随机数
@@ -36,7 +36,7 @@ public class HBaseUtils {
     }
 
     //转换Json
-    public JsonObject jsonObjectTool(Result result, JsonObject jsonObject1) {
+    public static JsonObject jsonObjectTool(Result result, JsonObject jsonObject1) {
 
         jsonObject1.addProperty("id",Bytes.toString(result.getRow()));
         jsonObject1.addProperty("author", Bytes.toString(result.getValue(Bytes.toBytes(cf1), Bytes.toBytes(cf1_author))));

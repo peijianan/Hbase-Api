@@ -9,6 +9,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
 
 
+/**
+ * @author liaochuntao
+ */
 @Slf4j
 @org.springframework.context.annotation.Configuration
 public class HBaseConfigure {
@@ -18,7 +21,7 @@ public class HBaseConfigure {
         Configuration conf;
         Connection connection;
         conf = HBaseConfiguration.create();
-        conf.set("hbase.zookeeper.quorum","47.107.174.124,47.107.166.42,119.23.249.129,120.77.223.42");  //节点参数
+        conf.set("hbase.zookeeper.quorum","47.107.174.124,47.107.166.42,119.23.249.129,120.77.223.42");
         conf.set("hbase.zookeeper.property.clientPort","2181");
         connection= ConnectionFactory.createConnection(conf);
         log.info("HBase 链接已被执行");

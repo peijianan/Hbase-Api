@@ -9,6 +9,9 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 
+/**
+ * @author liaochuntao
+ */
 @Slf4j
 @Configuration
 public class NacosConfigure {
@@ -28,10 +31,32 @@ public class NacosConfigure {
     @Value("${nacos.client.ip}")
     private String ip;
 
+    @Value("${nacos.client-1.ip}")
+    private String client1;
+
+    @Value("${nacos.client-2.ip}")
+    private String client2;
+
+    @Value("${nacos.client-3.ip}")
+    private String client3;
+
+    @Value("${spring.profiles.active}")
+    private String env;
+
     @PostConstruct
     public void registerInstance() throws NacosException {
-        log.info("ip : {}, port : {}, applicationName : {}", ip, serverPort, applicationName);
-        namingService.registerInstance(applicationName, ip, serverPort, clusterName);
+        if ("dev".equals(env)) {
+            log.info("ip : {}, port : {}, applicationName : {}", ip, serverPort, applicationName);
+            namingService.registerInstance(applicationName, ip, serverPort, clusterName);
+        }
+        if ("prod".equals(env)) {
+            log.info("ip : {}, port : {}, applicationName : {}", client1, serverPort, applicationName);
+            namingService.registerInstance(applicationName, client1, serverPort, clusterName);
+            log.info("ip : {}, port : {}, applicationName : {}", client2, serverPort, applicationName);
+            namingService.registerInstance(applicationName, client2, serverPort, clusterName);
+            log.info("ip : {}, port : {}, applicationName : {}", client3, serverPort, applicationName);
+            namingService.registerInstance(applicationName, client3, serverPort, clusterName);
+        }
     }
 
 }

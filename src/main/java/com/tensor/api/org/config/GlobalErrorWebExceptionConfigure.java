@@ -18,6 +18,9 @@ import reactor.core.scheduler.Schedulers;
 
 import java.util.Map;
 
+/**
+ * @author liaochuntao
+ */
 @Slf4j
 @Configuration
 public class GlobalErrorWebExceptionConfigure {

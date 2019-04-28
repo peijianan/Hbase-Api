@@ -11,7 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @Slf4j
 @SpringBootApplication
-@EnableNacosDiscovery(globalProperties = @NacosProperties(serverAddr = "127.0.0.1:8848"))
+@EnableNacosDiscovery(globalProperties = @NacosProperties(serverAddr = "120.24.90.180:8848"))
 public class HBaseApiApplication {
 
     public static void main(String[] args) {

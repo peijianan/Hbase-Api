@@ -37,13 +37,12 @@ public class HBaseNewsServiceImpl implements HBaseNewsService {
         ResultData resultData = new ResultData();
         boolean flag;
         try {
-            HBaseUtils hbBaseUtils = new HBaseUtils();  //工具类utils，获取标记与rowkey
-            String id = hbBaseUtils.getGoodId();
-            boolean a = hBaseBasicService.putdata(hbBaseUtils.TABLE_NAME, id, hbBaseUtils.cf1, hbBaseUtils.cf1_author, news.getAuthor());
-            boolean b = hBaseBasicService.putdata(hbBaseUtils.TABLE_NAME, id, hbBaseUtils.cf1, hbBaseUtils.cf1_newType, news.getNewType());
-            boolean c = hBaseBasicService.putdata(hbBaseUtils.TABLE_NAME, id, hbBaseUtils.cf1, hbBaseUtils.cf1_newTitle, news.getNewTitle());
-            boolean d = hBaseBasicService.putdata(hbBaseUtils.TABLE_NAME, id, hbBaseUtils.cf1, hbBaseUtils.cf1_text, news.getText());
-            flag = a && b && c && d;    //判断是否都存储成功
+            String id = HBaseUtils.getGoodId();
+            boolean a = hBaseBasicService.putdata(HBaseUtils.TABLE_NAME, id, HBaseUtils.cf1, HBaseUtils.cf1_author, news.getAuthor());
+            boolean b = hBaseBasicService.putdata(HBaseUtils.TABLE_NAME, id, HBaseUtils.cf1, HBaseUtils.cf1_newType, news.getNewType());
+            boolean c = hBaseBasicService.putdata(HBaseUtils.TABLE_NAME, id, HBaseUtils.cf1, HBaseUtils.cf1_newTitle, news.getNewTitle());
+            boolean d = hBaseBasicService.putdata(HBaseUtils.TABLE_NAME, id, HBaseUtils.cf1, HBaseUtils.cf1_text, news.getText());
+            flag = a && b && c && d;
             resultData.setData(flag);
             if (flag) {
                 resultData.setCode(HttpStatus.OK.value());
@@ -64,13 +63,12 @@ public class HBaseNewsServiceImpl implements HBaseNewsService {
     public Mono<ResultData<JsonArray>> getAllNews() {  //读取全部新闻
         ResultData resultData = new ResultData();
         try {
-            HBaseUtils hbBaseUtils = new HBaseUtils();
             JsonArray array = new JsonArray();
-            ResultScanner res = hBaseBasicService.scantable(hbBaseUtils.TABLE_NAME);
+            ResultScanner res = hBaseBasicService.scantable(HBaseUtils.TABLE_NAME);
             for (Result ress : res) {
 
                 JsonObject jsonObject = new JsonObject();
-                jsonObject = hbBaseUtils.jsonObjectTool(ress, jsonObject);
+                jsonObject = HBaseUtils.jsonObjectTool(ress, jsonObject);
                 array.add(jsonObject);
             }
             resultData.setData(array.toString());
@@ -90,14 +88,13 @@ public class HBaseNewsServiceImpl implements HBaseNewsService {
         ResultData resultData = new ResultData();
 
         try {
-            HBaseUtils hbBaseUtils = new HBaseUtils();
             JsonArray array = new JsonArray();
-            ResultScanner res = hBaseBasicService.QualifierFilter(hbBaseUtils.TABLE_NAME, hbBaseUtils.cf1_author);
+            ResultScanner res = hBaseBasicService.QualifierFilter(HBaseUtils.TABLE_NAME, HBaseUtils.cf1_author);
             for (Result ress : res) {
 
                 JsonObject jsonObject = new JsonObject();
                 jsonObject.addProperty("id",Bytes.toString(ress.getRow()));
-                jsonObject.addProperty("author", Bytes.toString(ress.getValue(Bytes.toBytes(hbBaseUtils.cf1), Bytes.toBytes(hbBaseUtils.cf1_author))));
+                jsonObject.addProperty("author", Bytes.toString(ress.getValue(Bytes.toBytes(HBaseUtils.cf1), Bytes.toBytes(HBaseUtils.cf1_author))));
                 array.add(jsonObject);
 
             }
@@ -117,14 +114,14 @@ public class HBaseNewsServiceImpl implements HBaseNewsService {
     public Mono<ResultData<JsonObject>> getAllTitle() {     //读取全部标题 返回 行键-标题
         ResultData resultData = new ResultData();
         try {
-            HBaseUtils hbBaseUtils = new HBaseUtils();
+
             JsonArray array = new JsonArray();
-            ResultScanner res = hBaseBasicService.QualifierFilter(hbBaseUtils.TABLE_NAME, hbBaseUtils.cf1_newTitle);
+            ResultScanner res = hBaseBasicService.QualifierFilter(HBaseUtils.TABLE_NAME, HBaseUtils.cf1_newTitle);
             for (Result ress : res) {
 
                 JsonObject jsonObject = new JsonObject();
                 jsonObject.addProperty("id", Bytes.toString(ress.getRow()));
-                jsonObject.addProperty("newTitle", Bytes.toString(ress.getValue(Bytes.toBytes(hbBaseUtils.cf1), Bytes.toBytes(hbBaseUtils.cf1_newTitle))));
+                jsonObject.addProperty("newTitle", Bytes.toString(ress.getValue(Bytes.toBytes(HBaseUtils.cf1), Bytes.toBytes(HBaseUtils.cf1_newTitle))));
                 array.add(jsonObject);
             }
             resultData.setData(array);
@@ -145,13 +142,12 @@ public class HBaseNewsServiceImpl implements HBaseNewsService {
 
         try {
             JsonArray array = new JsonArray();
-            HBaseUtils hbBaseUtils = new HBaseUtils();
-            hBaseBasicService.RowFilter(hbBaseUtils.TABLE_NAME, rowKey);
-            ResultScanner res = hBaseBasicService.WhileMatchbycolumnFilter(hbBaseUtils.TABLE_NAME, rowKey);
+            hBaseBasicService.RowFilter(HBaseUtils.TABLE_NAME, rowKey);
+            ResultScanner res = hBaseBasicService.WhileMatchbycolumnFilter(HBaseUtils.TABLE_NAME, rowKey);
             for (Result ress : res) {
 
                 JsonObject jsonObject = new JsonObject();
-                jsonObject = hbBaseUtils.jsonObjectTool(ress, jsonObject);
+                jsonObject = HBaseUtils.jsonObjectTool(ress, jsonObject);
                 array.add(jsonObject);
 
             }
@@ -172,13 +168,12 @@ public class HBaseNewsServiceImpl implements HBaseNewsService {
         ResultData resultData = new ResultData();
         try {
             JsonArray array = new JsonArray();
-            HBaseUtils hbBaseUtils = new HBaseUtils();
-            hBaseBasicService.RowFilter(hbBaseUtils.TABLE_NAME, newTitle);
-            ResultScanner res = hBaseBasicService.WhileMatchbycolumnFilter(hbBaseUtils.TABLE_NAME, newTitle);
+            hBaseBasicService.RowFilter(HBaseUtils.TABLE_NAME, newTitle);
+            ResultScanner res = hBaseBasicService.WhileMatchbycolumnFilter(HBaseUtils.TABLE_NAME, newTitle);
             for (Result ress : res) {
 
                 JsonObject jsonObject = new JsonObject();
-                jsonObject = hbBaseUtils.jsonObjectTool(ress, jsonObject);
+                jsonObject = HBaseUtils.jsonObjectTool(ress, jsonObject);
                 array.add(jsonObject);
             }
 

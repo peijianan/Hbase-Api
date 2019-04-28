@@ -14,11 +14,14 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * @author liaochuntao
+ */
 @Configuration
 public class HBaseMQConfigure {
 
     @Value("${tensor.hbase-api.mq.ring-buffer-size}")
-    private static int ringBufferSize;
+    private static volatile int ringBufferSize;
 
     private static final ConcurrentHashMap<String, Disruptor<Message>> MQ = new ConcurrentHashMap<>();
 

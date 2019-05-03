@@ -6,6 +6,7 @@ import com.tensor.api.org.enpity.News;
 import com.tensor.api.org.enpity.ResultData;
 import com.tensor.api.org.handler.NewsHandler;
 import com.tensor.api.org.service.hbase.HBaseNewsService;
+import com.tensor.api.org.service.mq.ProducerService;
 import com.tensor.api.org.util.ResponseRender;
 import com.tensor.api.org.util.alog.SimHashAlogUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,11 +27,14 @@ public class NewsHandlerImpl implements NewsHandler {
     @Autowired
     private HBaseNewsService hBaseNewsService;
 
+    @Autowired
+    private ProducerService producerService;
+
     @Override
     public Mono<ServerResponse> saveNew(ServerRequest request) {
         return request.bodyToMono(News.class).map(SimHashAlogUtil::simHash)
-                .publishOn(Schedulers.fromExecutor(Schedule.DB))
-                .flatMap(newsBean -> ResponseRender.render(hBaseNewsService.putNews(newsBean)))
+                .map(newBean -> producerService.publish(newBean))
+                .flatMap(ResponseRender::render)
                 .subscribeOn(Schedulers.elastic());
     }
 

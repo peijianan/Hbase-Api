@@ -24,7 +24,7 @@ public class HBaseConfigure {
         conf.set("hbase.zookeeper.quorum","47.107.174.124,47.107.166.42,119.23.249.129,120.77.223.42");
         conf.set("hbase.zookeeper.property.clientPort","2181");
         connection= ConnectionFactory.createConnection(conf);
-        log.info("HBase 链接已被执行");
+        log.info("HBase 连接操作已被执行");
         return connection;
     }
 

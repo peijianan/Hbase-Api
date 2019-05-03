@@ -4,8 +4,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.tensor.api.org.enpity.News;
 import com.tensor.api.org.enpity.ResultData;
+import com.tensor.api.org.enpity.mq.Message;
 import com.tensor.api.org.service.hbase.HBaseBasicService;
 import com.tensor.api.org.service.hbase.HBaseNewsService;
+import com.tensor.api.org.service.mq.ConsumerService;
 import com.tensor.api.org.service.mq.ProducerService;
 import com.tensor.api.org.util.HBaseUtils;
 import com.tensor.api.org.util.ResultCode;
@@ -18,13 +20,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-@Slf4j
-@Service(value = "HBaseNewsService")
+import javax.annotation.PostConstruct;
+
 /**
  * @author peijianan
  */
-
-public class HBaseNewsServiceImpl implements HBaseNewsService {
+@Slf4j
+@Service(value = "HBaseNewsService")
+public class HBaseNewsServiceImpl implements HBaseNewsService, ConsumerService {
 
     @Autowired
     private HBaseBasicService hBaseBasicService;
@@ -32,8 +35,29 @@ public class HBaseNewsServiceImpl implements HBaseNewsService {
     @Autowired
     private ProducerService producerService;
 
+    @PostConstruct
+    public void init() {
+        producerService.register("HBase-Store", this);
+    }
+
     @Override
-    public Mono<ResultData<Boolean>> putNews(News news) {   //根据传入的参数将新闻插入数据库 返回是否成功
+    public void onEvent(Message event) throws Exception {
+        Object data = event.getData();
+        Mono<ResultData<Boolean>> result = putNews((News) data);
+        result.subscribe(booleanResultData -> {
+            if (event.getRetryCnt() >= 3) {
+                log.error("[HBase-API Error] 新闻存储失败，已超过重试次数");
+                return;
+            }
+            if (!booleanResultData.getData()) {
+                event.setRetryCnt(event.getRetryCnt() + 1);
+                producerService.publish(event);
+            }
+        });
+    }
+
+    @Override
+    public Mono<ResultData<Boolean>> putNews(News news) {
         ResultData resultData = new ResultData();
         boolean flag;
         try {
@@ -55,7 +79,6 @@ public class HBaseNewsServiceImpl implements HBaseNewsService {
             resultData.setData(false);
         }
         return Mono.justOrEmpty(resultData);
-
     }
 
 
@@ -247,6 +270,4 @@ public class HBaseNewsServiceImpl implements HBaseNewsService {
 
 
     }
-
-
 }

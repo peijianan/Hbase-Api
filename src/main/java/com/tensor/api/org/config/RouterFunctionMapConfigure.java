@@ -16,6 +16,9 @@ import reactor.util.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @author liaochuntao
+ */
 @Slf4j
 @Configuration
 public class RouterFunctionMapConfigure extends AbstractHandlerMapping implements InitializingBean {

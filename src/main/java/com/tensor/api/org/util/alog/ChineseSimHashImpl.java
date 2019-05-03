@@ -1,7 +1,5 @@
 package com.tensor.api.org.util.alog;
 
-import com.tensor.api.org.enpity.News;
-import lombok.extern.slf4j.Slf4j;
 import org.ansj.app.keyword.KeyWordComputer;
 import org.ansj.app.keyword.Keyword;
 
@@ -12,16 +10,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * @Author: chuntaojun
- * @Date: 2019-03-26 22:16
+ * @author liaochuntao
  */
-@Slf4j
-public final class SimHashAlogUtil {
+public class ChineseSimHashImpl implements LanguageSimHash {
 
     private final static int TOP_K_KEY_WORD = 50;
 
-    public static News simHash(News newsBean) {
-        String str = newsBean.getText();
+    @Override
+    public String simHash(String str) {
         KeyWordComputer kwc = new KeyWordComputer(TOP_K_KEY_WORD);
         Collection<Keyword> keyList = kwc.computeArticleTfidf(str);
         Map<String, Double> keyWords = keyList.stream()
@@ -40,9 +36,9 @@ public final class SimHashAlogUtil {
             }
             keyScores.add(tmp);
         }).count();
-            ArrayList<Integer> answer = sum(keyScores);
+        ArrayList<Integer> answer = sum(keyScores);
         if (answer.isEmpty()) {
-            newsBean.setHashCode("00");
+            return "00";
         }
         StringBuilder simHash = new StringBuilder();
         answer.stream().peek(integer -> {
@@ -52,9 +48,7 @@ public final class SimHashAlogUtil {
                 simHash.append('0');
             }
         }).count();
-        log.info(simHash.toString());
-        newsBean.setHashCode(simHash.toString());
-        return newsBean;
+        return simHash.toString();
     }
 
     private static String hash(String str) {
@@ -87,12 +81,11 @@ public final class SimHashAlogUtil {
 
     private static String zeroFill(String s) {
         StringBuilder zero = new StringBuilder();
-        int a = 64 - s.length();
+        int a = HASH_BITS - s.length();
         for (int i = 0; i < a; i ++) {
             zero.append('0');
         }
         zero.append(s);
         return zero.toString();
     }
-
 }

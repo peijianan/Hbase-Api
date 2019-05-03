@@ -1,6 +1,13 @@
 package com.tensor.api.org.util;
 
+/**
+ * @author liaochuntao
+ */
+
 public enum  ResultCode {
+    /**
+     *
+     */
     STORAGE_FAILURE(1000, "HBase存储失败")
     ;
 

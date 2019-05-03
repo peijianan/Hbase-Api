@@ -22,8 +22,6 @@ public class ProducerServiceImpl implements ProducerService {
     @Autowired
     private HBaseMQConfigure.HBaseMQ hBaseMQ;
 
-    private static Disruptor<Message> MQ = null;
-
     public ProducerServiceImpl() {}
 
     @Override
@@ -33,12 +31,7 @@ public class ProducerServiceImpl implements ProducerService {
 
     @Override
     public <T> Mono<T> publish(T data) {
-        if (data instanceof Message) {
-            MQ.publishEvent(((event, sequence) -> Message.adaper(sequence, event, (Message) data)));
-        } else {
-            Message m = Message.builder().data(data).publishTime(System.currentTimeMillis()).build();
-            MQ.publishEvent((event, sequence) -> Message.adaper(sequence, event, m));
-        }
+        hBaseMQ.publish((Message) data);
         return Mono.justOrEmpty(data);
     }
 

@@ -20,8 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Configuration
 public class HBaseMQConfigure {
 
-    @Value("${tensor.hbase-api.mq.ring-buffer-size}")
-    private static volatile int ringBufferSize;
+    private static volatile int ringBufferSize = 1024 * 1024;
 
     private static final ConcurrentHashMap<String, Disruptor<Message>> MQ = new ConcurrentHashMap<>();
 
@@ -42,6 +41,10 @@ public class HBaseMQConfigure {
             disruptor.handleEventsWithWorkerPool(consumerService);
             disruptor.start();
             MQ.put(topic, disruptor);
+        }
+
+        public void publish(Message message) {
+            MQ.get(message.getTopic()).publishEvent(((event, sequence) -> Message.adaper(sequence, event, message)));
         }
 
     }

@@ -9,6 +9,9 @@ import reactor.core.scheduler.Schedulers;
 
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 
+/**
+ * @author liaochuntao
+ */
 public final class ResponseRender {
 
     public static Mono<ServerResponse> render(Mono dataMono) {

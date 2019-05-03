@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * @author liaochuntao
+ */
 @Data
 @Builder
 @NoArgsConstructor
@@ -23,6 +26,15 @@ public class Message<T> {
         var1.data = var2.data;
         var1.publishTime = var2.publishTime;
         var1.retryCnt = var2.retryCnt;
+    }
+
+    public static <T> Message<T> buildMessage(String topic, T data) {
+        return (Message<T>) Message.builder()
+                .topic(topic)
+                .data(data)
+                .publishTime(System.currentTimeMillis())
+                .retryCnt(0)
+                .build();
     }
 
 }

@@ -57,32 +57,6 @@ public class HBaseNewsServiceImpl implements HBaseNewsService, ConsumerService {
     }
 
     @Override
-    public Mono<ResultData<Boolean>> putNews(News news) {
-        ResultData resultData = new ResultData();
-        boolean flag;
-        try {
-            String id = HBaseUtils.getGoodId();
-            boolean a = hBaseBasicService.putdata(HBaseUtils.TABLE_NAME, id, HBaseUtils.cf1, HBaseUtils.cf1_author, news.getAuthor());
-            boolean b = hBaseBasicService.putdata(HBaseUtils.TABLE_NAME, id, HBaseUtils.cf1, HBaseUtils.cf1_newType, news.getNewType());
-            boolean c = hBaseBasicService.putdata(HBaseUtils.TABLE_NAME, id, HBaseUtils.cf1, HBaseUtils.cf1_newTitle, news.getNewTitle());
-            boolean d = hBaseBasicService.putdata(HBaseUtils.TABLE_NAME, id, HBaseUtils.cf1, HBaseUtils.cf1_text, news.getText());
-            flag = a && b && c && d;
-            resultData.setData(flag);
-            if (flag) {
-                resultData.setCode(HttpStatus.OK.value());
-            } else {
-                resultData.buildFromResultCode(ResultCode.STORAGE_FAILURE);
-            }
-        } catch (Exception e) {
-            resultData.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            resultData.setMsg(e.getLocalizedMessage());
-            resultData.setData(false);
-        }
-        return Mono.justOrEmpty(resultData);
-    }
-
-
-    @Override
     public Mono<ResultData<JsonArray>> getAllNews() {  //读取全部新闻
         ResultData resultData = new ResultData();
         try {
@@ -268,6 +242,35 @@ public class HBaseNewsServiceImpl implements HBaseNewsService, ConsumerService {
 
         return Mono.justOrEmpty(resultData);
 
+    }
 
+    /**
+     * 根据传入的参数将新闻插入数据库 返回是否成功
+     *
+     * @param news
+     * @return
+     */
+    public Mono<ResultData<Boolean>> putNews(News news) {
+        ResultData resultData = new ResultData();
+        boolean flag;
+        try {
+            String id = HBaseUtils.getGoodId();
+            boolean a = hBaseBasicService.putdata(HBaseUtils.TABLE_NAME, id, HBaseUtils.cf1, HBaseUtils.cf1_author, news.getAuthor());
+            boolean b = hBaseBasicService.putdata(HBaseUtils.TABLE_NAME, id, HBaseUtils.cf1, HBaseUtils.cf1_newType, news.getNewType());
+            boolean c = hBaseBasicService.putdata(HBaseUtils.TABLE_NAME, id, HBaseUtils.cf1, HBaseUtils.cf1_newTitle, news.getNewTitle());
+            boolean d = hBaseBasicService.putdata(HBaseUtils.TABLE_NAME, id, HBaseUtils.cf1, HBaseUtils.cf1_text, news.getText());
+            flag = a && b && c && d;
+            resultData.setData(flag);
+            if (flag) {
+                resultData.setCode(HttpStatus.OK.value());
+            } else {
+                resultData.buildFromResultCode(ResultCode.STORAGE_FAILURE);
+            }
+        } catch (Exception e) {
+            resultData.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            resultData.setMsg(e.getLocalizedMessage());
+            resultData.setData(false);
+        }
+        return Mono.justOrEmpty(resultData);
     }
 }

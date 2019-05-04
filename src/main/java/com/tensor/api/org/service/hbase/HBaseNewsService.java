@@ -8,13 +8,6 @@ import reactor.core.publisher.Mono;
 
 public interface HBaseNewsService {
 
-    /**
-     * 根据传入的参数将新闻插入数据库 返回是否成功
-     *
-     * @param news
-     * @return
-     */
-    Mono<ResultData<Boolean>> putNews(News news);
 
     /**
      * 读取全部新闻

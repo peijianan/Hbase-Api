@@ -34,7 +34,7 @@ public class NewRouter {
                         newsHandler::saveNew)
                 .andRoute(GET(StringConst.API + "new/get").and(contentType(MediaType.APPLICATION_JSON_UTF8)),
                         newsHandler::query)
-                .andRoute(GET(StringConst.API + "new/all").and(contentType(MediaType.APPLICATION_JSON_UTF8)),
+                .andRoute(GET(StringConst.API + "new/all").and(accept(MediaType.APPLICATION_JSON_UTF8)),
                         newsHandler::queryAll)
                 .andRoute(GET(StringConst.API + "new/author/all").and(contentType(MediaType.APPLICATION_JSON_UTF8)),
                         newsHandler::queryAllAuthor)

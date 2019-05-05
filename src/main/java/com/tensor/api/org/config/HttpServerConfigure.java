@@ -1,6 +1,6 @@
 package com.tensor.api.org.config;
 
-import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
@@ -34,7 +34,7 @@ public class HttpServerConfigure {
     @Bean
     public HttpMessageConverters httpMessageConverters() {
         GsonHttpMessageConverter gsonHttpMessageConverter = new GsonHttpMessageConverter();
-        gsonHttpMessageConverter.setGson(new Gson());
+        gsonHttpMessageConverter.setGson(new GsonBuilder().create());
         return new HttpMessageConverters(true, Collections.singletonList(gsonHttpMessageConverter));
     }
 

@@ -4,6 +4,7 @@ import com.tensor.api.org.util.ResultCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.http.HttpStatus;
 
 /**
  * @author liaochuntao
@@ -35,5 +36,23 @@ public class ResultData<T> {
     public void buildFromResultCode(ResultCode code) {
         this.code = code.getCode();
         this.msg = code.getDesc();
+    }
+
+    public static <T> ResultData<T> buildSuccessFromData(T data) {
+        return (ResultData<T>) ResultData
+                .builder()
+                .code(HttpStatus.OK.value())
+                .data(data)
+                .msg(HttpStatus.OK.getReasonPhrase())
+                .build();
+    }
+
+    public static <T> ResultData<T> buildErrorFromData(Exception data) {
+        return (ResultData<T>) ResultData
+                .builder()
+                .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .data(false)
+                .msg(data.getLocalizedMessage())
+                .build();
     }
 }

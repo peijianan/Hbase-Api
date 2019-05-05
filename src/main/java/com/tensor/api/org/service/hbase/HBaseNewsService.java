@@ -6,6 +6,8 @@ import com.tensor.api.org.enpity.News;
 import com.tensor.api.org.enpity.ResultData;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 public interface HBaseNewsService {
 
 
@@ -14,21 +16,21 @@ public interface HBaseNewsService {
      *
      * @return
      */
-    Mono<ResultData<JsonArray>> getAllNews();
+    Mono<ResultData<List>> getAllNews();
 
     /**
      * 读取全部作者 返回 行键-作者
      *
      * @return
      */
-    Mono<ResultData<JsonObject>> getAllAuthor();
+    Mono<ResultData<JsonArray>> getAllAuthor();
 
     /**
      * 读取全部标题 返回 行键-标题
      *
      * @return
      */
-    Mono<ResultData<JsonObject>> getAllTitle();
+    Mono<ResultData<JsonArray>> getAllTitle();
 
     /**
      * 根据行键读取新闻 返回对应新闻
@@ -36,7 +38,7 @@ public interface HBaseNewsService {
      * @param rowKey
      * @return
      */
-    Mono<ResultData<JsonObject>> getNewsByRowKey(String rowKey);
+    Mono<ResultData<JsonArray>> getNewsByRowKey(String rowKey);
 
     /**
      * 根据标题读取新闻  返回对应新闻
@@ -44,7 +46,7 @@ public interface HBaseNewsService {
      * @param newTitle
      * @return
      */
-    Mono<ResultData<JsonObject>> getNewsByTitle(String newTitle);
+    Mono<ResultData<JsonArray>> getNewsByTitle(String newTitle);
 
     /**
      * 根据作者读新闻    返回对应新闻
@@ -52,7 +54,7 @@ public interface HBaseNewsService {
      * @param author
      * @return
      */
-    Mono<ResultData<JsonObject>> getNewsByAuthor(String author);
+    Mono<ResultData<JsonArray>> getNewsByAuthor(String author);
 
     /**
      * 根据分类读新闻
@@ -60,5 +62,5 @@ public interface HBaseNewsService {
      * @param newType
      * @return
      */
-    Mono<ResultData<JsonObject>> getNewsByType(String newType);
+    Mono<ResultData<JsonArray>> getNewsByType(String newType);
 }

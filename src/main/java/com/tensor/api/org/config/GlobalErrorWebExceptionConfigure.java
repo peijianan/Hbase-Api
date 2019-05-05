@@ -45,7 +45,8 @@ public class GlobalErrorWebExceptionConfigure {
 
         private Mono<ServerResponse> renderErrorResponse(ServerRequest request) {
             final Map<String, Object> errorMap = getErrorAttributes(request, true);
-            log.error("【内部错误信息】：{}", errorMap.get("trace"));
+            log.error("[请求url信息]：{}", request.uri());
+            log.error("[内部错误信息]：{}", errorMap.get("trace"));
             Mono<ResultData> errMono = Mono.just(ResultData.builder().code(HttpStatus.INTERNAL_SERVER_ERROR.value())
                     .msg("内部错误").data(errorMap.get("trace")).build());
             return ServerResponse.ok().body(BodyInserters

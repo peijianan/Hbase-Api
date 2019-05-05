@@ -6,7 +6,6 @@ import java.util.*;
 import com.google.gson.JsonObject;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.util.Bytes;
-import scala.util.control.Exception;
 
 public class HBaseUtils {
 
@@ -36,7 +35,8 @@ public class HBaseUtils {
     }
 
     //转换Json
-    public static JsonObject jsonObjectTool(Result result, JsonObject jsonObject1) {
+    public static JsonObject jsonObjectTool(Result result) {
+        JsonObject jsonObject1 = new JsonObject();
 
         jsonObject1.addProperty("id",Bytes.toString(result.getRow()));
         jsonObject1.addProperty("author", Bytes.toString(result.getValue(Bytes.toBytes(cf1), Bytes.toBytes(cf1_author))));

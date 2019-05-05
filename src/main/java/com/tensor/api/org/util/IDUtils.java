@@ -22,10 +22,12 @@ public final class IDUtils {
                 .append(localDate.getYear())
                 .append(zeroFill(localDate.getMonthValue()))
                 .append(zeroFill(localDate.getDayOfMonth()))
-                .append(zeroFill(localDate.getDayOfWeek().getValue()))
                 .append(zeroFill(localTime.getHour()))
-                .append(currTime.substring(currTime.length() - 6))
+                .append(currTime.substring(currTime.length() - 4))
                 .append(last);
+        if (last / 100 != 0) {
+            ID_N.reset();
+        }
         return Long.valueOf(idBuilder.toString());
     }
 

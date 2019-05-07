@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 
+import java.util.HashMap;
+
 /**
  * @author liaochuntao
  */
@@ -15,6 +17,7 @@ import org.springframework.http.HttpStatus;
 public class ResultData<T> {
 
     private int code;
+    private boolean success;
     private T data;
     private String msg;
 
@@ -42,6 +45,7 @@ public class ResultData<T> {
         return (ResultData<T>) ResultData
                 .builder()
                 .code(HttpStatus.OK.value())
+                .success(true)
                 .data(data)
                 .msg(HttpStatus.OK.getReasonPhrase())
                 .build();
@@ -51,7 +55,8 @@ public class ResultData<T> {
         return (ResultData<T>) ResultData
                 .builder()
                 .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .data(false)
+                .success(false)
+                .data(new HashMap(0))
                 .msg(data.getLocalizedMessage())
                 .build();
     }

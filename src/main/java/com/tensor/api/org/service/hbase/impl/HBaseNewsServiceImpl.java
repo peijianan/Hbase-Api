@@ -77,7 +77,7 @@ public class HBaseNewsServiceImpl implements HBaseNewsService, ConsumerService {
             resultData = ResultData.buildErrorFromData(e);
         }
 
-        return Mono.justOrEmpty(resultData);
+        return Mono.just(resultData);
     }
 
     @Override
@@ -100,7 +100,7 @@ public class HBaseNewsServiceImpl implements HBaseNewsService, ConsumerService {
             resultData = ResultData.buildErrorFromData(e);
         }
         
-        return Mono.justOrEmpty(resultData);
+        return Mono.just(resultData);
     }
 
     @Override
@@ -122,7 +122,7 @@ public class HBaseNewsServiceImpl implements HBaseNewsService, ConsumerService {
             resultData = ResultData.buildErrorFromData(e);
         }
         
-        return Mono.justOrEmpty(resultData);
+        return Mono.just(resultData);
     }
 
     @Override
@@ -143,7 +143,7 @@ public class HBaseNewsServiceImpl implements HBaseNewsService, ConsumerService {
             resultData = ResultData.buildErrorFromData(e);
         }
         
-        return Mono.justOrEmpty(resultData);
+        return Mono.just(resultData);
     }
 
     @Override
@@ -164,7 +164,7 @@ public class HBaseNewsServiceImpl implements HBaseNewsService, ConsumerService {
             resultData = ResultData.buildErrorFromData(e);
         }
 
-        return Mono.justOrEmpty(resultData);
+        return Mono.just(resultData);
 
     }
 
@@ -186,7 +186,7 @@ public class HBaseNewsServiceImpl implements HBaseNewsService, ConsumerService {
             resultData = ResultData.buildErrorFromData(e);
         }
 
-        return Mono.justOrEmpty(resultData);
+        return Mono.just(resultData);
     }
 
     @Override
@@ -207,7 +207,7 @@ public class HBaseNewsServiceImpl implements HBaseNewsService, ConsumerService {
             resultData = ResultData.buildErrorFromData(e);
         }
 
-        return Mono.justOrEmpty(resultData);
+        return Mono.just(resultData);
 
     }
 
@@ -236,6 +236,6 @@ public class HBaseNewsServiceImpl implements HBaseNewsService, ConsumerService {
         } catch (Exception e) {
             resultData = ResultData.buildErrorFromData(e);
         }
-        return Mono.justOrEmpty(resultData);
+        return Mono.just(resultData);
     }
 }

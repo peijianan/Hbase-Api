@@ -31,7 +31,8 @@ public class NacosRouter {
                         , nacosHandler::put)
                 .andRoute(GET(StringConst.API).and(accept(MediaType.APPLICATION_JSON_UTF8))
                         .and(contentType(MediaType.APPLICATION_JSON_UTF8))
-                        , nacosHandler::get);
+                        , nacosHandler::get)
+                .andRoute(POST("/v1/mq/publish"), nacosHandler::publish);
     }
 
 }

@@ -2,6 +2,7 @@ package com.tensor.nacos.api.handler;
 
 import com.tensor.nacos.api.util.HttpUrlUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.reactivestreams.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
@@ -11,7 +12,14 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import org.springframework.web.reactive.socket.WebSocketHandler;
+import org.springframework.web.reactive.socket.WebSocketSession;
+import org.springframework.web.reactive.socket.client.ReactorNettyWebSocketClient;
+import org.springframework.web.reactive.socket.client.WebSocketClient;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.net.URI;
 
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 
@@ -25,14 +33,14 @@ public class NacosHandlerImpl implements NacosHandler {
     @Autowired
     private WebClient.Builder webClientBuilder;
 
+    @Autowired
+    private MessagePublish messagePublish;
+
     @LoadBalanced
     @Bean
     RestTemplate restTemplate() {
         return new RestTemplate();
     }
-
-    @Autowired
-    private RestTemplate restTemplate;
 
     @Override
     public Mono<ServerResponse> put(ServerRequest request) {
@@ -61,7 +69,6 @@ public class NacosHandlerImpl implements NacosHandler {
 
     @Override
     public Mono<ServerResponse> get(ServerRequest request) {
-        HttpUrlUtil.url(request.uri());
         return Mono.just(HttpUrlUtil.url(request.uri()))
                 .map(url -> webClientBuilder
                         .defaultHeaders(httpHeaders -> request.headers().asHttpHeaders())
@@ -72,5 +79,14 @@ public class NacosHandlerImpl implements NacosHandler {
                         .retrieve()
                         .bodyToMono(String.class))
                 .flatMap(stringMono -> ok().body(stringMono, String.class));
+    }
+
+    @Override
+    public Mono<ServerResponse> publish(ServerRequest request) {
+        return request.bodyToMono(String.class)
+                .map(s -> {
+                    messagePublish.exec(s);
+                    return Mono.just("OK");
+                }).flatMap(s -> ok().body(s, String.class));
     }
 }

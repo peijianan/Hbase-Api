@@ -2,12 +2,12 @@ package com.tensor.api.org.router;
 
 import com.tensor.api.org.handler.NewsHandler;
 import com.tensor.api.org.util.StringConst;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.server.RouterFunction;
-
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.*;
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
@@ -15,6 +15,7 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 /**
  * @author liaochuntao
  */
+@Slf4j
 @Configuration
 public class NewRouter {
 

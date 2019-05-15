@@ -1,5 +1,8 @@
 # DataStore-Api
 
+#### 运行方式
+
+screen java -jar -Dspring.cloud.nacos.discovery.ip={服务器公网ip} -Dspring.profiles.active=prod xxx.jar
 
 #### 目录层次
 

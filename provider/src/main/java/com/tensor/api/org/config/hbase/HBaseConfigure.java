@@ -23,6 +23,7 @@ public class HBaseConfigure {
         conf = HBaseConfiguration.create();
         conf.set("hbase.zookeeper.quorum","47.107.174.124,47.107.166.42,119.23.249.129,120.77.223.42");
         conf.set("hbase.zookeeper.property.clientPort","2181");
+        conf.set("hbase.client.retries.number", "3");
         connection= ConnectionFactory.createConnection(conf);
         log.info("HBase 连接操作已被执行");
         return connection;

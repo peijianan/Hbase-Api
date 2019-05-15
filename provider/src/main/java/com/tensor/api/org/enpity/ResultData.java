@@ -57,7 +57,7 @@ public class ResultData<T> {
         return (ResultData<T>) ResultData
                 .builder()
                 .code(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .data(new HashMap(0))
+                .data(false)
                 .msg(data.getLocalizedMessage())
                 .build();
     }

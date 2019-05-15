@@ -31,10 +31,10 @@ import static org.springframework.web.reactive.function.server.ServerResponse.ok
 public class NacosHandlerImpl implements NacosHandler {
 
     @Autowired
-    private WebClient.Builder webClientBuilder;
+    private WebClient webClient;
 
-    @Autowired
-    private MessagePublish messagePublish;
+//    @Autowired
+//    private MessagePublish messagePublish;
 
     @LoadBalanced
     @Bean
@@ -45,7 +45,7 @@ public class NacosHandlerImpl implements NacosHandler {
     @Override
     public Mono<ServerResponse> put(ServerRequest request) {
         return request.bodyToMono(String.class)
-                .map(s -> webClientBuilder.build().put()
+                .map(s -> webClient.put()
                         .uri(HttpUrlUtil.url(request.uri()))
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
                         .body(Mono.just(s), String.class)
@@ -57,7 +57,7 @@ public class NacosHandlerImpl implements NacosHandler {
     @Override
     public Mono<ServerResponse> post(ServerRequest request) {
         return request.bodyToMono(String.class)
-                .map(s -> webClientBuilder.build()
+                .map(s -> webClient
                         .post()
                         .uri(HttpUrlUtil.url(request.uri()))
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -70,9 +70,7 @@ public class NacosHandlerImpl implements NacosHandler {
     @Override
     public Mono<ServerResponse> get(ServerRequest request) {
         return Mono.just(HttpUrlUtil.url(request.uri()))
-                .map(url -> webClientBuilder
-                        .defaultHeaders(httpHeaders -> request.headers().asHttpHeaders())
-                        .build()
+                .map(url -> webClient
                         .get()
                         .uri(url)
                         .accept(MediaType.APPLICATION_JSON_UTF8)
@@ -83,10 +81,11 @@ public class NacosHandlerImpl implements NacosHandler {
 
     @Override
     public Mono<ServerResponse> publish(ServerRequest request) {
-        return request.bodyToMono(String.class)
-                .map(s -> {
-                    messagePublish.exec(s);
-                    return Mono.just("OK");
-                }).flatMap(s -> ok().body(s, String.class));
+        return ok().build();
+//        return request.bodyToMono(String.class)
+//                .map(s -> {
+//                    messagePublish.exec(s);
+//                    return Mono.just("OK");
+//                }).flatMap(s -> ok().body(s, String.class));
     }
 }

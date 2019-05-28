@@ -30,8 +30,11 @@ import java.util.Objects;
 @Configuration
 public class HttpServerConfigure {
 
-    @Autowired
-    private Environment environment;
+    private final Environment environment;
+
+    public HttpServerConfigure(Environment environment) {
+        this.environment = environment;
+    }
 
     @Bean
     public HttpServer httpServerForService(@Qualifier(value = "NacosRouter") RouterFunction<?> routerFunction) {

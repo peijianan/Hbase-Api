@@ -27,12 +27,12 @@ public class SolrNewimpl implements SolrNewService {
 
     @Override
     public Mono<ResultData<Boolean>> putNews(News news) {
-        ResultData resultData=new ResultData();
+        ResultData resultData = new ResultData();
         boolean flag;
         try {
-             String id =Long.toString(news.getId());
-             flag=solrSaveService.PutNew(news,id);
-             resultData.setData(flag);
+            String id = Long.toString(news.getId());
+            flag = solrSaveService.PutNew(news, id);
+            resultData.setData(flag);
             if (flag) {
                 resultData.setCode(HttpStatus.OK.value());
             } else {
@@ -48,7 +48,7 @@ public class SolrNewimpl implements SolrNewService {
     public Mono<ResultData<Page>> getAllNews(int pagenumber) throws Exception {
         ResultData resultData;
         try {
-            ArrayList arr=solrSearchService.SearchAllNews(pagenumber);
+            ArrayList arr = solrSearchService.SearchAllNews(pagenumber);
             List<News> newsList = new LinkedList<>();
             Page<List<News>> page = new Page<>();
             for (Object ress : arr) {
@@ -70,7 +70,7 @@ public class SolrNewimpl implements SolrNewService {
     public Mono<ResultData<Page>> getNewsByRowKey(String id) {
         ResultData resultData;
         try {
-            ArrayList arr=solrSearchService.SearchNewsByid(Long.parseLong(id));
+            ArrayList arr = solrSearchService.SearchNewsByid(Long.parseLong(id));
             List<News> newsList = new LinkedList<>();
             Page<List<News>> page = new Page<>();
             for (Object ress : arr) {
@@ -92,7 +92,7 @@ public class SolrNewimpl implements SolrNewService {
     public Mono<ResultData<Page>> queryNewsByAuthor(int pagenumbwer, String author) {
         ResultData resultData;
         try {
-            ArrayList arr=solrSearchService.SearchNewsByAuthor(pagenumbwer,author);
+            ArrayList arr = solrSearchService.SearchNewsByAuthor(pagenumbwer, author);
             List<News> newsList = new LinkedList<>();
             Page<List<News>> page = new Page<>();
             for (Object ress : arr) {
@@ -107,13 +107,14 @@ public class SolrNewimpl implements SolrNewService {
             resultData = ResultData.buildErrorFromData(e);
         }
 
-        return Mono.just(resultData);    }
+        return Mono.just(resultData);
+    }
 
     @Override
     public Mono<ResultData<Page>> queryNewsByTitle(int pagenumbwer, String newTitle) {
         ResultData resultData;
         try {
-            ArrayList arr=solrSearchService.SearchNewsBytitle(pagenumbwer,newTitle);
+            ArrayList arr = solrSearchService.SearchNewsBytitle(pagenumbwer, newTitle);
             List<News> newsList = new LinkedList<>();
             Page<List<News>> page = new Page<>();
             for (Object ress : arr) {
@@ -135,7 +136,7 @@ public class SolrNewimpl implements SolrNewService {
     public Mono<ResultData<Page>> queryNewsByType(int pagenumbwer, String newType) {
         ResultData resultData;
         try {
-            ArrayList arr=solrSearchService.SearchNewsBytype(pagenumbwer,newType);
+            ArrayList arr = solrSearchService.SearchNewsBytype(pagenumbwer, newType);
             List<News> newsList = new LinkedList<>();
             Page<List<News>> page = new Page<>();
             for (Object ress : arr) {

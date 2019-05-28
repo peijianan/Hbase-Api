@@ -7,8 +7,6 @@ configurations {
 
 dependencies {
     compile 'org.springframework.boot:spring-boot-starter-data-solr'
-//    compile group: 'org.restlet.jee', name: 'org.restlet', version: '2.4.1'
-//    compile group: 'org.restlet.jee', name: 'org.restlet.ext.servlet', version: '2.4.1'
 
     compile group: 'org.ansj', name: 'ansj_seg', version: '5.1.6'
     compile group: 'org.apache.hbase', name: 'hbase-client', version: '1.4.9'

@@ -30,7 +30,6 @@
 // * @author liaochuntao
 // */
 //@Slf4j
-//@RefreshScope
 //@Configuration
 //public class NacosConfigure {
 //
@@ -50,8 +49,8 @@
 //
 //    @PostConstruct
 //    private void init() throws NacosException {
-//        executorService.schedule(new Monitor(discoveryProperties.namingServiceInstance()), 10, TimeUnit.SECONDS);
-//        configProperties.configServiceInstance().addListener("hbase-api", "develop", new AbstractListener() {
+////        executorService.schedule(new Monitor(discoveryProperties.namingServiceInstance()), 10, TimeUnit.SECONDS);
+//        configProperties.configServiceInstance().addListener("test", "DEFAULT_GROUP", new AbstractListener() {
 //            @Override
 //            public void receiveConfigInfo(String configInfo) {
 //                log.info("更改后的信息 {}", configInfo);

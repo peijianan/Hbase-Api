@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "news")
 public class News {
 
-    private Long id = IDUtils.buildId();
+    private Long id;
     @Field(name = "new_title", cluster = "cf1")
     private String newTitle;
     @Field(name = "new_type", cluster = "cf1")

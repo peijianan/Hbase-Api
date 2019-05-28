@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 
 import com.tensor.api.org.enpity.News;
 
+import com.tensor.api.org.enpity.Page;
 import com.tensor.api.org.enpity.ResultData;
 
 import reactor.core.publisher.Mono;
@@ -33,7 +34,7 @@ public interface SolrNewService {
 
   */
 
- Mono<ResultData<JsonObject>> getAllNews(int pagenumber);
+ Mono<ResultData<Page>> getAllNews(int pagenumber) throws Exception;
 
 
  /**
@@ -48,7 +49,7 @@ public interface SolrNewService {
 
   */
 
- Mono<ResultData<JsonObject>> getNewsByRowKey(String id);
+ Mono<ResultData<Page>> getNewsByRowKey(String id);
 
  /**
 
@@ -61,7 +62,7 @@ public interface SolrNewService {
    * @return
 
   */
- Mono<ResultData<JsonObject>> queryNewsByAuthor(int pagenumbwer ,String author);
+ Mono<ResultData<Page>> queryNewsByAuthor(int pagenumbwer ,String author);
  /**
 
   * 标题  查询
@@ -73,7 +74,7 @@ public interface SolrNewService {
    * @return
 
   */
- Mono<ResultData<JsonObject>> queryNewsByTitle(int pagenumbwer,String newTitle);
+ Mono<ResultData<Page>> queryNewsByTitle(int pagenumbwer,String newTitle);
 
  /**
 
@@ -86,6 +87,6 @@ public interface SolrNewService {
    * @return
 
   */
- Mono<ResultData<JsonObject>> queryNewsByType(int pagenumbwer,String newType);
+ Mono<ResultData<Page>> queryNewsByType(int pagenumbwer,String newType);
 
 }

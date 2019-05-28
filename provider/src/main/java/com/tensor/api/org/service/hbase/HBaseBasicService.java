@@ -2,6 +2,8 @@ package com.tensor.api.org.service.hbase;
 
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
+import org.apache.hadoop.hbase.filter.ByteArrayComparable;
+import org.apache.hadoop.hbase.filter.CompareFilter;
 
 import java.util.List;
 
@@ -66,6 +68,11 @@ public interface HBaseBasicService {
 
     //17.根据value值寻找 全部列的value都会被检索
     ResultScanner ValueFilter(String tableName, String value) throws Exception;
+
+    //18.根据特定列中特定值扫描，返回符合结果的行
+    ResultScanner SingleColumnValueFilter(String tableName,String cf,String column,String value)throws Exception;
+    //19.扫描返回特定的列,drop是false或者true决定参考列可以被返回还是被丢弃，比较符operator和比较器comparator可为null，即扫描参考列全列
+    ResultScanner DependentColumnFilter(String tableName, String cf, String column, boolean drop, CompareFilter.CompareOp operator, ByteArrayComparable comparator)throws Exception;
 
 
 }

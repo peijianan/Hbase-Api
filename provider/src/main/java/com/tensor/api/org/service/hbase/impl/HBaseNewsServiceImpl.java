@@ -15,6 +15,7 @@ import com.tensor.api.org.util.ResultCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
+import org.apache.hadoop.hbase.filter.CompareFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -68,8 +69,8 @@ public class HBaseNewsServiceImpl implements HBaseNewsService, BatchConsumerServ
     public Mono<ResultData<Page>> getAllNews() {
         ResultData resultData;
         try {
-            List<News> newsList = new LinkedList<>();
             ResultScanner res = hBaseBasicService.scantable(HBaseUtils.TABLE_NAME);
+            List<News> newsList = new LinkedList<>();
             Page<List<News>> page = new Page<>();
             for (Result ress : res) {
 
@@ -87,107 +88,21 @@ public class HBaseNewsServiceImpl implements HBaseNewsService, BatchConsumerServ
     }
 
     @Override
-    public Mono<ResultData<JsonArray>> getAllAuthor() {
-        ResultData resultData;
-
-        try {
-            JsonArray array = new JsonArray();
-            ResultScanner res = hBaseBasicService.QualifierFilter(HBaseUtils.TABLE_NAME, HBaseUtils.cf1_author);
-            for (Result ress : res) {
-
-                JsonObject jsonObject = new JsonObject();
-                jsonObject.addProperty("id",Bytes.toString(ress.getRow()));
-                jsonObject.addProperty("author", Bytes.toString(ress.getValue(Bytes.toBytes(HBaseUtils.cf1), Bytes.toBytes(HBaseUtils.cf1_author))));
-                array.add(jsonObject);
-
-            }
-            resultData = ResultData.buildSuccessFromData(array);
-        } catch (Exception e) {
-            resultData = ResultData.buildErrorFromData(e);
-        }
-        
-        return Mono.just(resultData);
-    }
-
-    @Override
-    public Mono<ResultData<JsonArray>> getAllTitle() {     //读取全部标题 返回 行键-标题
+    public Mono<ResultData<Page>> getAllAuthor() {
         ResultData resultData;
         try {
-
-            JsonArray array = new JsonArray();
-            ResultScanner res = hBaseBasicService.QualifierFilter(HBaseUtils.TABLE_NAME, HBaseUtils.cf1_newTitle);
+            List<News> newsList = new LinkedList<>();
+            Page<List<News>> page = new Page<>();
+            ResultScanner res = hBaseBasicService.DependentColumnFilter(HBaseUtils.TABLE_NAME,HBaseUtils.cf1,HBaseUtils.cf1_author,false, CompareFilter.CompareOp.NO_OP,null);
             for (Result ress : res) {
 
-                JsonObject jsonObject = new JsonObject();
-                jsonObject.addProperty("id", Bytes.toString(ress.getRow()));
-                jsonObject.addProperty("newTitle", Bytes.toString(ress.getValue(Bytes.toBytes(HBaseUtils.cf1), Bytes.toBytes(HBaseUtils.cf1_newTitle))));
-                array.add(jsonObject);
-            }
-            resultData = ResultData.buildSuccessFromData(array);
-        } catch (Exception e) {
-            resultData = ResultData.buildErrorFromData(e);
-        }
-        
-        return Mono.just(resultData);
-    }
-
-    @Override
-    public Mono<ResultData<JsonArray>> getNewsByRowKey(String rowKey) {    //根据行键读取新闻 返回对应新闻
-        ResultData resultData;
-
-        try {
-            JsonArray array = new JsonArray();
-            ResultScanner res = hBaseBasicService.WhileMatchbycolumnFilter(HBaseUtils.TABLE_NAME, rowKey);
-            for (Result ress : res) {
-
-                JsonObject jsonObject = HBaseUtils.jsonObjectTool(ress);
-                array.add(jsonObject);
+                News news = MAPPING_FACTORY.mapToObj(ress, News.class);
+                newsList.add(news);
 
             }
-            resultData = ResultData.buildSuccessFromData(array);
-        } catch (Exception e) {
-            resultData = ResultData.buildErrorFromData(e);
-        }
-        
-        return Mono.just(resultData);
-    }
-
-    @Override
-    public Mono<ResultData<JsonArray>> getNewsByTitle(String newTitle) {   //根据标题读取新闻  返回对应新闻
-        ResultData resultData;
-        try {
-            JsonArray array = new JsonArray();
-            hBaseBasicService.RowFilter(HBaseUtils.TABLE_NAME, newTitle);
-            ResultScanner res = hBaseBasicService.WhileMatchbycolumnFilter(HBaseUtils.TABLE_NAME, newTitle);
-            for (Result ress : res) {
-
-                JsonObject jsonObject = HBaseUtils.jsonObjectTool(ress);
-                array.add(jsonObject);
-            }
-
-            resultData = ResultData.buildSuccessFromData(array);
-        } catch (Exception e) {
-            resultData = ResultData.buildErrorFromData(e);
-        }
-
-        return Mono.just(resultData);
-
-    }
-
-    @Override
-    public Mono<ResultData<JsonArray>> getNewsByType(String newType) {     //根据分类读新闻
-        ResultData resultData;
-        JsonArray array = new JsonArray();
-
-        try {
-            ResultScanner res = hBaseBasicService.WhileMatchbycolumnFilter(HBaseUtils.TABLE_NAME, newType);
-            for (Result ress : res) {
-
-                JsonObject jsonObject = HBaseUtils.jsonObjectTool(ress);
-                array.add(jsonObject);
-            }
-
-            resultData = ResultData.buildSuccessFromData(array);
+            page.setData(newsList);
+            page.setTotal(newsList.size());
+            resultData = ResultData.buildSuccessFromData(page);
         } catch (Exception e) {
             resultData = ResultData.buildErrorFromData(e);
         }
@@ -196,19 +111,111 @@ public class HBaseNewsServiceImpl implements HBaseNewsService, BatchConsumerServ
     }
 
     @Override
-    public Mono<ResultData<JsonArray>> getNewsByAuthor(String author) {    //根据作者读新闻    返回对应新闻
+    public Mono<ResultData<Page>> getAllTitle() {     //读取全部标题 返回 行键-标题
         ResultData resultData;
-        JsonArray array = new JsonArray();
-
         try {
-            ResultScanner res = hBaseBasicService.WhileMatchbycolumnFilter(HBaseUtils.TABLE_NAME, author);
+            List<News> newsList = new LinkedList<>();
+            Page<List<News>> page = new Page<>();
+            ResultScanner res = hBaseBasicService.DependentColumnFilter(HBaseUtils.TABLE_NAME,HBaseUtils.cf1,HBaseUtils.cf1_newTitle,false, CompareFilter.CompareOp.NO_OP,null);
             for (Result ress : res) {
 
-                JsonObject jsonObject = HBaseUtils.jsonObjectTool(ress);
-                array.add(jsonObject);
-            }
-            resultData = ResultData.buildSuccessFromData(array);
 
+                News news = MAPPING_FACTORY.mapToObj(ress, News.class);
+                newsList.add(news);
+
+            }
+            page.setData(newsList);
+            page.setTotal(newsList.size());
+            resultData = ResultData.buildSuccessFromData(page);
+        } catch (Exception e) {
+            resultData = ResultData.buildErrorFromData(e);
+        }
+
+        return Mono.just(resultData);
+    }
+
+    @Override
+    public Mono<ResultData<Page>> getNewsByRowKey(String rowKey) {    //根据行键读取新闻 返回对应新闻
+        ResultData resultData;
+        try {
+            List<News> newsList = new LinkedList<>();
+            Page<List<News>> page = new Page<>();
+            ResultScanner res = hBaseBasicService.RowFilter(HBaseUtils.TABLE_NAME, rowKey);
+            for (Result ress : res) {
+
+                News news = MAPPING_FACTORY.mapToObj(ress, News.class);
+                newsList.add(news);
+            }
+            page.setData(newsList);
+            page.setTotal(newsList.size());
+            resultData = ResultData.buildSuccessFromData(page);
+        } catch (Exception e) {
+            resultData = ResultData.buildErrorFromData(e);
+        }
+
+        return Mono.just(resultData);
+    }
+
+    @Override
+    public Mono<ResultData<Page>>getNewsByTitle(String newTitle) {   //根据标题读取新闻  返回对应新闻
+        ResultData resultData;
+        try {
+            List<News> newsList = new LinkedList<>();
+            Page<List<News>> page = new Page<>();
+            ResultScanner res = hBaseBasicService.SingleColumnValueFilter(HBaseUtils.TABLE_NAME,HBaseUtils.cf1,HBaseUtils.cf1_newTitle,newTitle);
+            for (Result ress : res) {
+
+                News news = MAPPING_FACTORY.mapToObj(ress, News.class);
+                newsList.add(news);
+            }
+            page.setData(newsList);
+            page.setTotal(newsList.size());
+            resultData = ResultData.buildSuccessFromData(page);
+        } catch (Exception e) {
+            resultData = ResultData.buildErrorFromData(e);
+        }
+
+        return Mono.just(resultData);
+
+    }
+
+    @Override
+    public Mono<ResultData<Page>> getNewsByType(String newType) {     //根据分类读新闻
+        ResultData resultData;
+        try {
+            List<News> newsList = new LinkedList<>();
+            Page<List<News>> page = new Page<>();
+            ResultScanner res = hBaseBasicService.SingleColumnValueFilter(HBaseUtils.TABLE_NAME,HBaseUtils.cf1,HBaseUtils.cf1_newType,newType);
+            for (Result ress : res) {
+
+                News news = MAPPING_FACTORY.mapToObj(ress, News.class);
+                newsList.add(news);
+            }
+            page.setData(newsList);
+            page.setTotal(newsList.size());
+            resultData = ResultData.buildSuccessFromData(page);
+        } catch (Exception e) {
+            resultData = ResultData.buildErrorFromData(e);
+        }
+
+        return Mono.just(resultData);
+    }
+
+    @Override
+    public Mono<ResultData<Page>> getNewsByAuthor(String author) {    //根据作者读新闻    返回对应新闻
+        ResultData resultData;
+        try {
+            List<News> newsList = new LinkedList<>();
+            Page<List<News>> page = new Page<>();
+            ResultScanner res = hBaseBasicService.SingleColumnValueFilter(HBaseUtils.TABLE_NAME,HBaseUtils.cf1,HBaseUtils.cf1_author,author);
+            for (Result ress : res) {
+
+                News news = MAPPING_FACTORY.mapToObj(ress, News.class);
+                newsList.add(news);
+            }
+            page.setData(newsList);
+            page.setTotal(newsList.size());
+            resultData = ResultData.buildSuccessFromData(page);
         } catch (Exception e) {
             resultData = ResultData.buildErrorFromData(e);
         }
@@ -227,12 +234,17 @@ public class HBaseNewsServiceImpl implements HBaseNewsService, BatchConsumerServ
         ResultData resultData = new ResultData();
         boolean flag;
         try {
-            String id = HBaseUtils.getGoodId();
+            String id =Long.toString(news.getId());
             boolean a = hBaseBasicService.putdata(HBaseUtils.TABLE_NAME, id, HBaseUtils.cf1, HBaseUtils.cf1_author, news.getAuthor());
             boolean b = hBaseBasicService.putdata(HBaseUtils.TABLE_NAME, id, HBaseUtils.cf1, HBaseUtils.cf1_newType, news.getNewType());
             boolean c = hBaseBasicService.putdata(HBaseUtils.TABLE_NAME, id, HBaseUtils.cf1, HBaseUtils.cf1_newTitle, news.getNewTitle());
-            boolean d = hBaseBasicService.putdata(HBaseUtils.TABLE_NAME, id, HBaseUtils.cf1, HBaseUtils.cf1_text, news.getText());
-            flag = a && b && c && d;
+            boolean d = hBaseBasicService.putdata(HBaseUtils.TABLE_NAME, id, HBaseUtils.cf2, HBaseUtils.cf2_text, news.getText());
+            boolean e = hBaseBasicService.putdata(HBaseUtils.TABLE_NAME, id, HBaseUtils.cf1, HBaseUtils.cf1_publishDate, news.getPublishDate());
+            boolean f = hBaseBasicService.putdata(HBaseUtils.TABLE_NAME, id, HBaseUtils.cf1, HBaseUtils.cf1_url,news.getUrl());
+            boolean g = hBaseBasicService.putdata(HBaseUtils.TABLE_NAME, id, HBaseUtils.cf1, HBaseUtils.cf1_source,news.getSource());
+            boolean h = hBaseBasicService.putdata(HBaseUtils.TABLE_NAME, id, HBaseUtils.cf1, HBaseUtils.cf1_hashcode,news.getHashCode());
+
+            flag = a && b && c && d && e && f && g && h;
             resultData.setData(flag);
             if (flag) {
                 resultData.setCode(HttpStatus.OK.value());

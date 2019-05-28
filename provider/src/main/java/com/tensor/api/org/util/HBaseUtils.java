@@ -16,10 +16,14 @@ public class HBaseUtils {
     public static final String cf1_newTitle = "newTitle";
     public static final String cf1_newType = "newType";
     public static final String cf1_author = "author";
-    public static final String cf1_text = "text";
-    public static final String cf_2_hash_code = "";
+    public static final String cf2_text = "text";
+    public static final String cf1_hashcode = "hashcode";
+    public static final String cf1_publishDate="publishDate";
+    public static final String cf1_url="url";
+    public static final String cf1_source="source";
 
 
+/*
     //设置表名
     public static void setTableName(String tableName) {
         TABLE_NAME = tableName;
@@ -48,6 +52,8 @@ public class HBaseUtils {
     }
 
 
+
+ */
 }
 
 

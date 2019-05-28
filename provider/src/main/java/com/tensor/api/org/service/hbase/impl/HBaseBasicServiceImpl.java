@@ -15,17 +15,7 @@ import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.client.Table;
-import org.apache.hadoop.hbase.filter.BinaryComparator;
-import org.apache.hadoop.hbase.filter.FamilyFilter;
-import org.apache.hadoop.hbase.filter.Filter;
-import org.apache.hadoop.hbase.filter.FirstKeyOnlyFilter;
-import org.apache.hadoop.hbase.filter.PrefixFilter;
-import org.apache.hadoop.hbase.filter.QualifierFilter;
-import org.apache.hadoop.hbase.filter.RowFilter;
-import org.apache.hadoop.hbase.filter.ValueFilter;
-import org.apache.hadoop.hbase.filter.WhileMatchFilter;
-import org.apache.hadoop.hbase.filter.SkipFilter;
-import org.apache.hadoop.hbase.filter.TimestampsFilter;
+import org.apache.hadoop.hbase.filter.*;
 import org.apache.hadoop.hbase.filter.CompareFilter.CompareOp;
 import org.apache.hadoop.hbase.util.Bytes;
 
@@ -376,5 +366,56 @@ public class HBaseBasicServiceImpl implements HBaseBasicService {
         } finally {
             table.close();
         }
+    }
+    @Override
+    public ResultScanner SingleColumnValueFilter(String tableName, String cf, String column, String value) throws Exception {
+        Table table = connection.getTable(TableName.valueOf(tableName));
+        try {
+            Scan scan = new Scan();
+            SingleColumnValueFilter filter = new SingleColumnValueFilter(Bytes.toBytes(cf), Bytes.toBytes(column), CompareOp.EQUAL, new SubstringComparator(value));
+            filter.setFilterIfMissing(true);
+            scan.setFilter(filter);
+            ResultScanner scanner = table.getScanner(scan);
+            return scanner;
+        } catch (Exception e) {
+            e.printStackTrace();
+            ResultScanner rs = null;
+            return rs;
+        } finally {
+            table.close();
+        }
+
+    }
+
+    @Override
+    public ResultScanner DependentColumnFilter(String tableName, String cf, String column, boolean drop, CompareFilter.CompareOp operator, ByteArrayComparable comparator) throws Exception {
+        Table table = connection.getTable(TableName.valueOf(tableName));
+        Filter filter;
+        try{
+            if (comparator != null) {
+                filter = new DependentColumnFilter(Bytes.toBytes(cf), Bytes.toBytes(column), drop, operator, comparator);
+            } else {
+                filter = new DependentColumnFilter(Bytes.toBytes(cf), Bytes.toBytes(column), drop);
+            }
+            Scan scan = new Scan();
+            scan.setFilter(filter);
+            ResultScanner scanner = table.getScanner(scan);
+            return scanner;
+        }catch(
+                Exception e)
+
+        {
+            e.printStackTrace();
+            ResultScanner rs = null;
+            return rs;
+        } finally
+
+        {
+            table.close();
+        }
+
+
+
+
     }
 }

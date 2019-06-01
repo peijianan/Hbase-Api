@@ -1,5 +1,6 @@
 package com.tensor.mq.api.store;
 
+import com.lmax.disruptor.BlockingWaitStrategy;
 import com.lmax.disruptor.EventFactory;
 import com.lmax.disruptor.YieldingWaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
@@ -40,7 +41,7 @@ public class MQStore {
     };
 
     private RejectedExecutionHandler rejectedExecutionHandler =
-            (r, executor) -> log.error("{} Hbase任务被拒绝。 {}", r.toString(), executor.toString());
+            (r, executor) -> log.error("{} MQ 任务被拒绝。 {}", r.toString(), executor.toString());
 
     private final ThreadPoolExecutor MQ = new ThreadPoolExecutor(MIN_POO_SIE, MIN_POO_SIE, KEEP_ALIVE_TIME, UNIT,
             new ArrayBlockingQueue<>(1000), MQ_Thread_Factory, rejectedExecutionHandler);
@@ -49,7 +50,7 @@ public class MQStore {
 
     private Disruptor<Message> disruptor(int ringBufferSize) {
         EventFactory<Message> factory = Message::new;
-        return new Disruptor<>(factory, ringBufferSize, MQ, ProducerType.SINGLE, new YieldingWaitStrategy());
+        return new Disruptor<>(factory, ringBufferSize, MQ, ProducerType.SINGLE, new BlockingWaitStrategy());
     }
 
     public boolean isExist(String topic) {
@@ -57,7 +58,7 @@ public class MQStore {
     }
 
     public void register(String topic, Supplier<ConsumerService> supplier) {
-        if (tensorMQ.containsKey(topic)) {
+        if (isExist(topic)) {
             throw new IllegalArgumentException(String.format("Topic-[%s] 已存在，不可重复注册[Topic]", topic));
         }
         int ringBufferSize = 1024 * 1024;

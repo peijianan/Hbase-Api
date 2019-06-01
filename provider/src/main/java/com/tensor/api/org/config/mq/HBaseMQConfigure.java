@@ -1,7 +1,7 @@
 package com.tensor.api.org.config.mq;
 
+import com.lmax.disruptor.BlockingWaitStrategy;
 import com.lmax.disruptor.EventFactory;
-import com.lmax.disruptor.YieldingWaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.dsl.ProducerType;
 import com.tensor.api.org.config.schedule.Schedule;
@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.net.ServerSocket;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -30,7 +29,7 @@ public class HBaseMQConfigure {
 
         private Disruptor<Message> disruptor(int ringBufferSize) {
             EventFactory<Message> factory = Message::new;
-            return new Disruptor<>(factory, ringBufferSize, Schedule.MQ, ProducerType.SINGLE, new YieldingWaitStrategy());
+            return new Disruptor<>(factory, ringBufferSize, Schedule.MQ, ProducerType.SINGLE, new BlockingWaitStrategy());
         }
 
         public void register(String topic, ConsumerService consumerService) {

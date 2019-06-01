@@ -1,7 +1,9 @@
 package com.tensor.mq.api.config;
 
-import com.tensor.mq.api.handler.impl.MQConsumerHandlerImpl;
-import com.tensor.mq.api.handler.impl.MQProducerHandlerImpl;
+import com.tensor.mq.api.handler.mq.MQConsumerHandlerImpl;
+import com.tensor.mq.api.handler.mq.MQProducerHandlerImpl;
+import com.tensor.org.mq.serialize.kryo.KryoDecoder;
+import com.tensor.org.mq.serialize.kryo.KryoEncoder;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -23,6 +25,7 @@ import javax.annotation.PostConstruct;
 
 
 /**
+ *
  * @author liaochuntao
  */
 @Slf4j
@@ -57,8 +60,8 @@ public class WebSocketConfigure {
                         @Override
                         protected void initChannel(SocketChannel ch) throws Exception {
                             ch.pipeline().addLast(new LoggingHandler(LogLevel.INFO));
-                            ch.pipeline().addLast(new StringDecoder());
-                            ch.pipeline().addLast(new StringEncoder());
+                            ch.pipeline().addLast(new KryoDecoder(10 * 1024 * 1024));
+                            ch.pipeline().addLast(new KryoEncoder());
                             ch.pipeline().addLast(mqConsumerHandler);
                             ch.pipeline().addLast(mqProducerHandler);
                         }

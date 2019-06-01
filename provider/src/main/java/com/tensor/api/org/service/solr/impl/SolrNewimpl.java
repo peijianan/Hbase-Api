@@ -18,6 +18,9 @@ import java.util.List;
 
 import static com.tensor.api.org.util.hbase.MappingFactory.MAPPING_FACTORY;
 
+/**
+ * @author liaochuntao
+ */
 public class SolrNewimpl implements SolrNewService {
 
     @Autowired
@@ -31,7 +34,7 @@ public class SolrNewimpl implements SolrNewService {
         boolean flag;
         try {
             String id = Long.toString(news.getId());
-            flag = solrSaveService.PutNew(news, id);
+            flag = solrSaveService.putNew(news, id);
             resultData.setData(flag);
             if (flag) {
                 resultData.setCode(HttpStatus.OK.value());

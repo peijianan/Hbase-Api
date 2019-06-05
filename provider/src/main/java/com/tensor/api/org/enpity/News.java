@@ -31,10 +31,14 @@ public class News {
     private String text;
     @Field(name = "publish_date", cluster = "cf1")
     private String publishDate = DateUtils.now();
+    @Field(name = "download_date", cluster = "cf1")
+    private String downloadDate = DateUtils.now();
     @Field(name = "url", cluster = "cf1")
     private String url;
     @Field(name = "source", cluster = "cf1")
     private String source;
+    @Field(name = "actual_url", cluster = "cf1")
+    private String actualUrl;
     @Field(name = "hash_code", cluster = "cf2")
     private String hashCode;
 

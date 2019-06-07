@@ -23,7 +23,6 @@ import static org.springframework.web.reactive.function.server.ServerResponse.ok
  * @author liaochuntao
  */
 @Slf4j
-@RefreshScope
 @Component
 public class NacosHandlerImpl implements NacosHandler {
 

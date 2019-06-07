@@ -234,6 +234,12 @@ public class HBaseNewsServiceImpl implements HBaseNewsService, BatchConsumerServ
         ResultData resultData = new ResultData();
         boolean flag;
         try {
+
+            /**
+             * 采用新的接口信息 {@link com.tensor.api.org.enpity.ColumnData}
+             * 采用新的方法进行遍历插入数据 {@link com.tensor.api.org.util.hbase.MappingFactory#buildColumnData(Object)}
+             */
+
             String id =Long.toString(news.getId());
             boolean a = hBaseBasicService.putdata(HBaseUtils.TABLE_NAME, id, HBaseUtils.cf1, HBaseUtils.cf1_author, news.getAuthor());
             boolean b = hBaseBasicService.putdata(HBaseUtils.TABLE_NAME, id, HBaseUtils.cf1, HBaseUtils.cf1_newType, news.getNewType());

@@ -8,7 +8,6 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  * @author liaochuntao
  */
 @SpringBootApplication
-@EnableDiscoveryClient
 public class NacosApiApplication {
 
     public static void main(String[] args) {

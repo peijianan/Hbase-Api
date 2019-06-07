@@ -30,11 +30,8 @@ import java.util.Objects;
 @Configuration
 public class HttpServerConfigure {
 
-    private final Environment environment;
-
-    public HttpServerConfigure(Environment environment) {
-        this.environment = environment;
-    }
+    @Autowired
+    private Environment environment;
 
     @Bean
     public HttpServer httpServerForService(@Qualifier(value = "NacosRouter") RouterFunction<?> routerFunction) {
@@ -62,6 +59,7 @@ public class HttpServerConfigure {
      * @return
      */
     private HttpServer getHttpServer(RouterFunction<?> routerFunction) {
+        System.out.println(environment.getProperty("server.port"));
         HttpHandler handler = RouterFunctions.toHttpHandler(routerFunction);
         ReactorHttpHandlerAdapter httpHandlerAdapter = new ReactorHttpHandlerAdapter(handler);
         HttpServer httpServer = HttpServer.create()

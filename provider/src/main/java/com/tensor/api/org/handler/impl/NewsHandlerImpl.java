@@ -1,6 +1,7 @@
 package com.tensor.api.org.handler.impl;
 
 import com.tensor.api.org.enpity.News;
+import com.tensor.api.org.enpity.ResultData;
 import com.tensor.api.org.enpity.mq.Message;
 import com.tensor.api.org.handler.NewsHandler;
 import com.tensor.api.org.service.hbase.HBaseNewsService;
@@ -35,7 +36,10 @@ public class NewsHandlerImpl implements NewsHandler {
         return request.bodyToMono(News.class)
                 .map(SimHashAlogUtils::nlp)
                 .map(newBean -> Message.buildMessage(MessageUtils.MQ_TOPIC_STORE, newBean))
-                .map(message -> producerService.publish(message))
+                .map(message -> {
+                    Mono<Message> messageMono = producerService.publish(message);
+                    return messageMono.map(ResultData::buildSuccessFromData);
+                })
                 .flatMap(ResponseRender::render)
                 .subscribeOn(Schedulers.elastic());
     }

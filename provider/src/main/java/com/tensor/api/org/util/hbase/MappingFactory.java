@@ -2,12 +2,15 @@ package com.tensor.api.org.util.hbase;
 
 import com.google.gson.Gson;
 import com.tensor.api.org.annotation.Table;
+import com.tensor.api.org.enpity.ColumnData;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.springframework.data.annotation.Id;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -67,6 +70,47 @@ public class MappingFactory {
             log.error("[MappingFactory] : {}", e);
         }
         return t;
+    }
+
+    public List<ColumnData> buildColumnData(Object saveData) throws IllegalAccessException {
+        Class<?> cls = saveData.getClass();
+        Mapper mapper = getMapper(cls);
+        if (Objects.isNull(mapper)) {
+            register(cls);
+            mapper = getMapper(cls);
+        }
+
+        List<ColumnData> columnDatas = new LinkedList<>();
+
+        Table table = cls.getAnnotation(Table.class);
+        String tableName = table.name();
+        String rowKey = null;
+
+        for (Field field : mapper.fields) {
+            if (field.isAnnotationPresent(Id.class)) {
+                rowKey = String.valueOf(field.get(saveData));
+                break;
+            }
+        }
+
+        if (StringUtils.isEmpty(rowKey)) {
+            throw new IllegalArgumentException("RowKey can't not be null");
+        }
+
+        for (Map.Entry<String, ColumnInfo> entry : mapper.getColumnInfoMap().entrySet()) {
+            ColumnInfo columnInfo = entry.getValue();
+            Field field = columnInfo.getField();
+            field.setAccessible(true);
+            ColumnData data = new ColumnData();
+            data.setTableName(tableName);
+            data.setColumn(columnInfo.name);
+            data.setCf(columnInfo.cluster);
+            data.setRowKey(rowKey);
+            data.setValue(String.valueOf(field.get(saveData)));
+
+            columnDatas.add(data);
+        }
+        return columnDatas;
     }
 
     @Data

@@ -10,6 +10,10 @@
 .settings
 .springBeans
 .sts4-cache
+<<<<<<< HEAD
+=======
+.DS_Store
+>>>>>>> dev
 
 ### IntelliJ IDEA ###
 .idea

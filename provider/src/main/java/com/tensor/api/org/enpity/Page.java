@@ -10,7 +10,7 @@ import java.util.ArrayList;
 @Data
 public class Page<T> {
 
-    private T data = (T) new ArrayList();
+    private T data = (T) new ArrayList(0);
     private int total;
 
 }

@@ -1,6 +1,6 @@
 package com.tensor.nacos.api.util;
 
-import java.util.concurrent.atomic.LongAdder;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author <a href="mailto:liaochunyhm@live.com">liaochuntao</a>
@@ -8,11 +8,10 @@ import java.util.concurrent.atomic.LongAdder;
  */
 public class IDUtils {
 
-    private static final LongAdder LONG_ADDER = new LongAdder();
+    private static final AtomicLong LONG_ADDER = new AtomicLong(0);
 
     public static synchronized long createID() {
-        LONG_ADDER.increment();
-        return LONG_ADDER.longValue();
+        return LONG_ADDER.incrementAndGet();
     }
 
 }

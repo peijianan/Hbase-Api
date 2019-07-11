@@ -38,13 +38,12 @@ public class NacosHandlerImpl implements NacosHandler {
         return new RestTemplate();
     }
 
+    @Autowired
+    private RestTemplate restTemplate;
+
     @Override
     public Mono<ServerResponse> put(ServerRequest request) {
         return request.bodyToMono(Map.class)
-                .map(s -> {
-                    s.put("id", IDUtils.createID());
-                    return s;
-                })
                 .map(s -> webClient.put()
                         .uri(HttpUrlUtil.url(request.uri()))
                         .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -74,13 +73,9 @@ public class NacosHandlerImpl implements NacosHandler {
 //    @SentinelResource(value = "news-get")
     @Override
     public Mono<ServerResponse> get(ServerRequest request) {
+
         return Mono.just(HttpUrlUtil.url(request.uri()))
-                .map(url -> webClient
-                        .get()
-                        .uri(url)
-                        .accept(MediaType.APPLICATION_JSON_UTF8)
-                        .retrieve()
-                        .bodyToMono(String.class))
+                .map(url -> Mono.just(restTemplate.getForObject(url, String.class)))
                 .flatMap(stringMono -> ok().body(stringMono, String.class));
     }
 

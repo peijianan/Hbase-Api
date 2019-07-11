@@ -2,6 +2,10 @@
 
 ![build](https://travis-ci.org/chuntaojun/Hbase-Api.svg?branch=master)
 
+#### 如何构建部署的 JAR
+
+进入指定模块下，执行`gradle build`即可，比如`Consumer`，则进入此模块的根目录下`/Consumer`，运行打包命令，然后在`out`目录中查找`jar`包
+
 #### 运行方式
 
 screen java -jar -Dspring.cloud.nacos.discovery.ip={服务器公网ip} -Dspring.profiles.active=prod xxx.jar

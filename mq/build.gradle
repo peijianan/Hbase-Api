@@ -1,8 +1,0 @@
-version '0.0.1'
-
-dependencies {
-    compile(project(":mq-common"))
-    compile group: 'com.lmax', name: 'disruptor', version: '3.4.2'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-}

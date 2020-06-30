@@ -1,8 +1,6 @@
 rootProject.name='hbase-api'
-include 'provider'
-include 'consumer'
-include 'mq'
 
 rootProject.children.each {project ->
     project.buildFileName = "build.gradle"
 }
+
